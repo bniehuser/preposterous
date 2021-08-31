@@ -1,0 +1,113 @@
+@import "variables";
+@import "effects";
+
+.head-container {
+  height: 26px;
+  background-color: darken($color-background-base, 3%);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  margin: 0 -1px 0 0;
+
+  .head-item {
+    @extend .font-regular;
+    @extend .type-regular;
+
+    display: inline-block;
+    height: 26px;
+    margin: 0 1px 0 0;
+
+    color: $color-text;
+    background-color: rgba(255, 255, 255, 0.05);
+
+    .label {
+      display: block;
+      height: 24px;
+      line-height: 19px;
+      padding: 5px 6px 0;
+      text-transform: uppercase;
+    }
+
+    .link {
+      cursor: pointer;
+    }
+
+    .link:hover {
+      color: $color-text-light;
+    }
+
+    .disabled {
+      cursor: not-allowed;
+    }
+
+    .indicator {
+      display: block;
+      height: 2px;
+    }
+
+    .indicatorPrimary {
+      @extend .indicator;
+      background-color: fade-out($color-accent-primary, .85);
+    }
+
+    .indicatorPrimaryActive {
+      @extend .shadowPrimary;
+      background-color: $color-accent-primary;
+    }
+
+    .indicatorPrimaryPulse {
+      @extend .shadowPulseSuccess;
+    }
+
+    .indicatorSecondary {
+      @extend .indicator;
+      background-color: fade-out($color-accent-secondary, .85);
+    }
+
+    .indicatorSecondaryActive {
+      @extend .shadowSecondary;
+      background-color: $color-accent-secondary;
+    }
+
+    .indicatorSecondaryPulse {
+      @extend .shadowPulseSecondary;
+    }
+
+    .indicatorSuccess {
+      @extend .indicator;
+      background-color: fade-out($color-green, .85);
+    }
+
+    .indicatorSuccessActive {
+      @extend .shadowSuccess;
+      background-color: $color-green;
+    }
+
+    .indicatorSuccessPulse {
+      @extend .shadowPulseSuccess;
+    }
+
+    .indicatorFailure {
+      @extend .indicator;
+      background-color: fade-out($color-green, .85);
+    }
+
+    .indicatorFailureActive {
+      @extend .shadowFailure;
+      background-color: $color-red;
+    }
+
+    .indicatorFailurePulse {
+      @extend .shadowPulseFailure;
+    }
+
+    .indicatorDisabled {
+      @extend .indicator;
+
+      background-color: $color-text-disabled;
+    }
+
+  }
+}

@@ -1,0 +1,151 @@
+@import "variables";
+
+.insetShadowPrimary {
+  -webkit-box-shadow: inset 0 0 6px 0 $color-accent-primary;
+  -moz-box-shadow: inset 0 0 6px 0 $color-accent-primary;
+  box-shadow: inset 0 0 6px 0 $color-accent-primary;
+}
+
+.insetShadowSecondary {
+  -webkit-box-shadow: inset 0 0 6px 0 $color-accent-secondary;
+  -moz-box-shadow: inset 0 0 6px 0 $color-accent-secondary;
+  box-shadow: inset 0 0 6px 0 $color-accent-secondary;
+}
+
+.insetShadowFailure {
+  -webkit-box-shadow: inset 0 0 6px 0 $color-red;
+  -moz-box-shadow: inset 0 0 6px 0 $color-red;
+  box-shadow: inset 0 0 6px 0 $color-red;
+}
+
+.insetShadowDimmed {
+  -webkit-box-shadow: inset 0 0 6px 0 #000;
+  -moz-box-shadow: inset 0 0 6px 0 #000;
+  box-shadow: inset 0 0 6px 0 #000;
+}
+
+.shadowPrimary {
+  -webkit-box-shadow: 0 0 6px 0 $color-accent-primary;
+  -moz-box-shadow: 0 0 6px 0 $color-accent-primary;
+  box-shadow: 0 0 6px 0 $color-accent-primary;
+}
+
+.shadowSecondary {
+  -webkit-box-shadow: 0 0 6px 0 $color-accent-secondary;
+  -moz-box-shadow: 0 0 6px 0 $color-accent-secondary;
+  box-shadow: 0 0 6px 0 $color-accent-secondary;
+}
+
+.shadowSuccess {
+  -webkit-box-shadow: 0 0 6px 0 $color-green;
+  -moz-box-shadow: 0 0 6px 0 $color-green;
+  box-shadow: 0 0 6px 0 $color-green;
+}
+
+.shadowFailure {
+  -webkit-box-shadow: 0 0 6px 0 $color-red;
+  -moz-box-shadow: 0 0 6px 0 $color-red;
+  box-shadow: 0 0 6px 0 $color-red;
+}
+
+.shadowInactive {
+  -webkit-box-shadow: 0 0 6px 0 fade-out($color-accent-primary, .50);
+  -moz-box-shadow: 0 0 6px 0 fade-out($color-accent-primary, .50);
+  box-shadow: 0 0 6px 0 fade-out($color-accent-primary, .50);
+}
+
+.shadowPulseSuccess {
+  background-color: $color-green;
+  -webkit-box-shadow: 0 0 6px 0 $color-green;
+  -moz-box-shadow: 0 0 6px 0 $color-green;
+  box-shadow: 0 0 6px 0 $color-green;
+  animation: pulseSuccess 2s infinite;
+}
+
+.shadowPulseSecondary {
+  background-color: $color-accent-secondary;
+  -webkit-box-shadow: 0 0 6px 0 $color-accent-secondary;
+  -moz-box-shadow: 0 0 6px 0 $color-accent-secondary;
+  box-shadow: 0 0 6px 0 $color-accent-secondary;
+  animation: pulseSecondary 2s infinite;
+}
+
+.shadowPulseFailure {
+  background-color: $color-red;
+  -webkit-box-shadow: 0 0 6px 0 $color-red;
+  -moz-box-shadow: 0 0 6px 0 $color-red;
+  box-shadow: 0 0 6px 0 $color-red;
+  animation: pulseFailure 2s infinite;
+}
+
+@keyframes pulseSuccess {
+  0% {
+    background-color: $color-green;
+    -webkit-box-shadow: 0 0 6px 0 $color-green;
+    -moz-box-shadow: 0 0 6px 0 $color-green;
+    box-shadow: 0 0 6px 0 $color-green;
+    opacity: 1.0;
+  }
+  50% {
+    background-color: $color-green;
+    -webkit-box-shadow: 0 0 6px 0 $color-green;
+    -moz-box-shadow: 0 0 6px 0 $color-green;
+    box-shadow: 0 0 6px 0 $color-green;
+    opacity: 0.25;
+  }
+  100% {
+    background-color: $color-green;
+    -webkit-box-shadow: 0 0 6px 0 $color-green;
+    -moz-box-shadow: 0 0 6px 0 $color-green;
+    box-shadow: 0 0 6px 0 $color-green;
+    opacity: 1.0;
+  }
+}
+
+@keyframes pulseSecondary {
+  0% {
+    background-color: $color-accent-secondary;
+    -webkit-box-shadow: 0 0 6px 0 $color-accent-secondary;
+    -moz-box-shadow: 0 0 6px 0 $color-accent-secondary;
+    box-shadow: 0 0 6px 0 $color-accent-secondary;
+    opacity: 1.0;
+  }
+  50% {
+    background-color: $color-accent-secondary;
+    -webkit-box-shadow: 0 0 6px 0 $color-accent-secondary;
+    -moz-box-shadow: 0 0 6px 0 $color-accent-secondary;
+    box-shadow: 0 0 6px 0 $color-accent-secondary;
+    opacity: 0.25;
+  }
+  100% {
+    background-color: $color-accent-secondary;
+    -webkit-box-shadow: 0 0 6px 0 $color-accent-secondary;
+    -moz-box-shadow: 0 0 6px 0 $color-accent-secondary;
+    box-shadow: 0 0 6px 0 $color-accent-secondary;
+    opacity: 1.0;
+  }
+}
+
+@keyframes pulseFailure {
+  0% {
+    background-color: $color-red;
+    -webkit-box-shadow: 0 0 6px 0 $color-red;
+    -moz-box-shadow: 0 0 6px 0 $color-red;
+    box-shadow: 0 0 6px 0 $color-red;
+    opacity: 1.0;
+  }
+  50% {
+    background-color: $color-red;
+    -webkit-box-shadow: 0 0 6px 0 $color-red;
+    -moz-box-shadow: 0 0 6px 0 $color-red;
+    box-shadow: 0 0 6px 0 $color-red;
+    opacity: 0.25;
+  }
+  100% {
+    background-color: $color-red;
+    -webkit-box-shadow: 0 0 6px 0 $color-red;
+    -moz-box-shadow: 0 0 6px 0 $color-red;
+    box-shadow: 0 0 6px 0 $color-red;
+    opacity: 1.0;
+  }
+}

@@ -1,0 +1,130 @@
+@import "variables";
+
+.btn {
+  display: inline-block;
+  border: none;
+  line-height: $form-component-height;
+  padding: 0 8px;
+  margin: 0;
+  font-size: 11px;
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn:hover {
+  color: $color-text-on-accent-primary;
+}
+
+.btn + .btn {
+  margin-left: 4px;
+}
+
+.primary {
+  @extend .btn;
+  background-color: $color-accent-primary;
+}
+
+.success {
+  @extend .btn;
+  background-color: $color-green;
+}
+
+.danger {
+  @extend .btn;
+  background-color: $color-red;
+}
+
+.neutral {
+  @extend .btn;
+  background-color: #aaa;
+}
+
+.dark {
+  @extend .btn;
+  background-color: lighten($color-background-base, 5%);
+  color: lighten($color-background-base, 25%);
+
+  &:hover {
+    background-color: $color-accent-primary;
+    color: $color-text-on-accent-primary;
+  }
+}
+
+.disabled {
+  @extend .btn;
+  color: $color-text-disabled;
+  background-color: $color-background-component;
+  cursor: not-allowed;
+
+  &:hover {
+    color: $color-text-disabled;
+  }
+}
+
+.inline {
+  padding: 1px 2px;
+  margin-bottom: 1px;
+  font-size: 10px;
+  line-height: 11px;
+  font-weight: bold;
+  text-transform: none;
+}
+
+.inline + .inline {
+  margin-left: 1px;
+}
+
+.primaryInline {
+  @extend .primary;
+  @extend .inline;
+}
+
+.successInline {
+  @extend .success;
+  @extend .inline;
+}
+
+.dangerInline {
+  @extend .danger;
+  @extend .inline;
+}
+
+.neutralInline {
+  @extend .neutral;
+  @extend .inline;
+}
+
+.darkInline {
+  @extend .dark;
+  @extend .inline;
+}
+
+.disabledInline {
+  @extend .disabled;
+  @extend .inline;
+}
+
+@keyframes background-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.loading {
+  @extend .btn;
+
+  $color-dark: fade-out($color-orange, .50);
+  $color-light: fade-out($color-orange, .70);
+  background-color: $color-light;
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 25%, $color-dark 25%, $color-dark 50%);
+  background-size: 40px 40px;
+  animation: background-stripes 1s linear infinite;
+
+  cursor: not-allowed;
+}

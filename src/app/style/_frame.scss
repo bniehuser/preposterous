@@ -1,0 +1,231 @@
+@import "variables";
+@import "effects";
+@import "fonts";
+
+.container {
+  height: 100%;
+  background-color: $color-background-base;
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar {
+  position: relative;
+  width: 52px;
+
+  background: linear-gradient(to right, $color-background-base 0, darken($color-background-base, 5%) 100%) repeat-x;
+}
+
+.logo {
+  margin: 13px 11px;
+  height: 30px;
+  width: 30px;
+  content: 'LOGO';
+  // background-image: url("../../../../img/header-logo.png");
+  -webkit-background-size: cover;
+  background-size: cover;
+}
+
+.logoLoading {
+  @extend .logo;
+  content: 'LOADING...';
+  // background-image: url("../../../../img/header-logo-animated.gif");
+}
+
+.uiToggles {
+  margin-bottom: 30px;
+}
+
+.toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 1px;
+
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+.toggleDisabled {
+  cursor: auto;
+}
+
+.toggleLabel {
+  @extend .font-regular;
+  @extend .type-regular;
+
+  display: inline-block;
+  flex-grow: 1;
+  padding: 0 4px 0 6px;
+  line-height: 19px;
+
+  color: $color-text;
+  text-transform: uppercase;
+}
+
+.toggleLabel:hover {
+  color: $color-text-light;
+}
+
+.toggleDisabled .toggleLabel {
+  color: $color-text-disabled;
+}
+
+.toggleIndicator {
+  display: inline-block;
+  width: 2px;
+  height: 19px;
+}
+
+.toggleIndicatorPrimary {
+  @extend .toggleIndicator;
+  background-color: fade-out($color-accent-primary, .85);
+}
+
+.toggleIndicatorPrimaryActive {
+  @extend .toggleIndicator;
+  @extend .shadowPrimary;
+  background-color: $color-accent-primary;
+}
+
+.toggleIndicatorPrimaryDisabled {
+  @extend .toggleIndicator;
+  background-color: fade-out($color-accent-primary, .95);
+}
+
+.toggleIndicatorSecondary {
+  @extend .toggleIndicator;
+  background-color: fade-out($color-accent-secondary, .85);
+}
+
+.toggleIndicatorSecondaryActive {
+  @extend .toggleIndicator;
+  @extend .shadowSecondary;
+  background-color: $color-accent-secondary;
+}
+
+.toggleIndicatorSecondaryDisabled {
+  @extend .toggleIndicator;
+  background-color: fade-out($color-accent-secondary, .95);
+}
+
+.toggleIndicatorPulse {
+  @extend .toggleIndicator;
+  background-color: fade-out($color-accent-secondary, .85);
+}
+
+.toggleIndicatorPulseActive {
+  @extend .toggleIndicator;
+  @extend .shadowPulseSuccess;
+}
+
+.toggleIndicatorPulseDisabled {
+  @extend .toggleIndicator;
+  background-color: fade-out($color-accent-secondary, .95);
+}
+
+.app-title {
+  position: absolute;
+  bottom: 12px;
+  margin-left: 52px;
+  line-height: 52px;
+  transform: rotate(-90deg);
+  transform-origin: left bottom;
+
+  font-size: 31px;
+  font-family: 'Audiowide', sans-serif;
+  color: #202020;
+  text-shadow: 0 -1px 1px #333, 0 1px 1px #444;
+}
+
+.body {
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  position: relative;
+  flex-grow: 1;
+}
+
+.foot {
+  height: 26px;
+  background-color: darken($color-background-base, 2%);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+
+  .foot-item {
+    @extend .font-regular;
+    @extend .type-regular;
+
+    display: inline-block;
+    height: 26px;
+    margin: 0 1px 0 0;
+
+    background-color: rgba(255, 255, 255, 0.05);
+    color: $color-text;
+    text-transform: uppercase;
+    cursor: pointer;
+
+  &:hover {
+    color: $color-text-light;
+  }
+
+  &.create {
+    @extend .foot-item;
+    border-top: 2px solid fade-out($color-accent-primary, .85);
+    line-height: 19px;
+    padding: 2px 6px 3px;
+  }
+
+    &.disabled {
+    @extend .create;
+
+    cursor: not-allowed;
+  }
+
+    &.buffer {
+    @extend .foot-item;
+  }
+
+  .indicator {
+    height: 2px;
+  }
+
+  .indicatorOpened {
+    @extend .indicator;
+    @extend .shadowPrimary;
+    background-color: $color-accent-primary;
+  }
+
+  .indicatorMinimized {
+    @extend .indicator;
+    background-color: fade-out($color-accent-primary, .85);
+  }
+
+  .title {
+    height: 24px;
+    line-height: 19px;
+    padding: 2px 6px 3px;
+  }
+  }
+
+}
+
+.loginRequired {
+  cursor: pointer;
+}
+
+.loginRequiredDismiss {
+  @extend .type-small;
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+}

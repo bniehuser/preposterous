@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
+@import url('https://fonts.googleapis.com/css?family=Droid+Sans:400,700');
+@import url('https://fonts.googleapis.com/css?family=Advent+Pro:100,200,300,400,500,600,700');
+@import url('https://fonts.googleapis.com/css?family=Audiowide');
+
+.font-smoothing {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-headers {
+  font-family: 'Advent Pro', sans-serif;
+}
+
+.font-small-headers {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.font-regular {
+  font-family: 'Droid Sans', sans-serif;
+}
+
+
+.type-intro {
+  font-size: 52px;
+  line-height: 1.3;
+}
+
+.type-very-large {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.type-larger {
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.type-large {
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.type-regular {
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+.type-small {
+  font-size: 10px;
+  line-height: 1.1;
+}
+
+.type-very-small {
+  font-size: 8px;
+  line-height: 1.0;
+}
+
+.type-title {
+  font-size: 12px;
+  line-height: 1.1;
+}

@@ -1,0 +1,178 @@
+@import "variables";
+
+.form {
+  padding: 1px;
+
+  .form-component {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin-bottom: 2px;
+    font-size: 11px;
+
+    label {
+      display: inline-block;
+      min-width: 140px;
+      padding: 0 2px;
+      line-height: $form-component-height;
+      color: $color-text-on-accent-primary;
+      font-weight: bold;
+    }
+
+  }
+
+  .input {
+    flex-grow: 1;
+    text-align: right;
+
+    .static {
+      display: inline-block;
+      line-height: $form-component-height;
+      padding: 0 4px;
+      background-color: mix($color-background-component, $color-accent-secondary, 85%);
+    }
+
+    input {
+      height: $form-component-height;
+      line-height: $form-component-height;
+      padding: 0 4px;
+      border: 0;
+      border-bottom: 1px solid mix($color-background-component, $color-accent-primary, 50%);
+      background-color: mix($color-background-component, $color-accent-primary, 85%);
+      color: $color-text-component;
+      text-align: right;
+    }
+
+    input:focus {
+      outline: none;
+      border-bottom: 1px solid $color-accent-primary;
+    }
+
+    input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      color: $color-text-label;
+    }
+
+    input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color: $color-text-label;
+      opacity: 1;
+    }
+
+    input::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color: $color-text-label;
+      opacity: 1;
+    }
+
+    input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color: $color-text-label;
+    }
+
+    select {
+      height: $form-component-height;
+      line-height: $form-component-height;
+      padding: 0 4px;
+      border: 0;
+      border-bottom: 1px solid mix($color-background-component, $color-accent-primary, 50%);
+      background-color: mix($color-background-component, $color-accent-primary, 85%);
+      color: $color-text-component;
+      text-align: left;
+    }
+
+    select:focus {
+      outline: none;
+      border-bottom: 1px solid $color-accent-primary;
+    }
+  }
+
+  .passive {
+    @extend .form-component;
+    background-color: mix($color-background-component, $color-accent-secondary, 95%);
+
+    label {
+      background-color: $color-accent-secondary;
+    }
+  }
+
+  .active {
+    @extend .form-component;
+    background-color: mix($color-background-component, $color-accent-primary, 95%);
+
+    label {
+      background-color: $color-accent-primary;
+    }
+  }
+
+  .error {
+    @extend .form-component;
+    background-color: mix($color-background-component, $color-red, 95%);
+
+    label {
+      background-color: $color-red;
+    }
+
+    .input {
+      input {
+        border-bottom: 1px solid mix($color-background-component, $color-red, 50%);
+        background-color: mix($color-background-component, $color-red, 85%);
+      }
+
+      input:focus {
+        border-bottom: 1px solid $color-red;
+      }
+    }
+  }
+
+  .header {
+    @extend .form-component;
+
+    label {
+      width: 100%;
+      background-color: fade-out($color-accent-secondary, .85);
+      color: $color-text-header;
+    }
+  }
+
+  .cmd {
+    @extend .form-component;
+    background-color: mix($color-background-component, #aaa, 95%);
+
+    label {
+      background-color: #aaa;
+    }
+  }
+
+  .btn {
+    display: inline-block;
+    border: none;
+    line-height: $form-component-height;
+    padding: 0 8px;
+    margin: 0;
+    font-size: 11px;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .btnNeutral {
+    @extend .btn;
+    background-color: #aaa;
+  }
+
+  .btnPrimary {
+    @extend .btn;
+    background-color: $color-accent-primary;
+  }
+
+  .btnDanger {
+    @extend .btn;
+    background-color: $color-red;
+  }
+
+  .btnSuccess {
+    @extend .btn;
+    background-color: $color-green;
+  }
+
+  .cmd .btn {
+    margin-left: 4px;
+  }
+}

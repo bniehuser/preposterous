@@ -1,0 +1,11 @@
+@import "variables";
+
+.link {
+  display: inline;
+  color: $color-link;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: $color-link-hover;
+}

@@ -1,0 +1,137 @@
+@import 'variables';
+@import 'fonts';
+@import 'button';
+@import 'feedback';
+@import 'link';
+@import 'tile';
+@import 'frame';
+@import 'head';
+@import 'forms';
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  height: 100%;
+}
+
+a {
+  color: $color-accent-secondary;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-accent-hover;
+  }
+}
+
+#container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+// remove any outline resulting from the hotkeys component
+#container > div[tabindex="-1"] > div[tabindex="-1"] {
+  outline: 0;
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #262626;
+  @extend .type-regular;
+  @extend .font-regular;
+}
+
+.panel {
+  margin: 6px;
+  background-color: #222;
+  box-shadow: 0 0 5px rgba(63, 162, 222, .5); // fix?
+  header {
+    background-color: rgba(63, 162, 222, 0.15);
+    color: #eee;
+    padding: 5px 8px;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(63, 162, 222, 0.2);
+
+    font-size: 11px;
+    text-transform: uppercase;
+    line-height: normal;
+    font-family: 'Open Sans', sans-serif;
+  }
+}
+
+.content {
+  color: #bbb;
+  padding: 8px;
+}
+
+@mixin icon($r, $g, $b) {
+  background: linear-gradient(135deg, rgb($r, $g, $b), rgb($r+25, $g+25, $b+25));
+  color: rgb($r+127, $g+127, $b+127);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 2px auto;
+  position: relative;
+  .inset {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    line-height: 0.9;
+    border-radius: 3px 0 0 0;
+    padding: 3px 3px 2px 4px;
+    color: #bbb;
+    background-color: #23282b;
+    font-size: 8px;
+  }
+}
+
+.icon {
+  &--bui {
+    @include icon(52, 140, 160)
+  }
+  &--agr {
+    @include icon(92, 18, 18)
+  }
+  &--ele {
+    @include icon(91, 46, 183)
+  }
+  &--conb {
+    @include icon(73, 85, 97)
+  }
+  &--conl {
+    @include icon(9, 15, 15)
+  }
+  &--pla {
+    @include icon(26, 60, 162)
+  }
+  &--conm {
+    @include icon(24, 91, 211)
+  }
+  &--conp {
+    @include icon(35, 30, 68)
+  }
+  &--conf {
+    @include icon(54, 54, 54)
+  }
+  &--chm {
+    @include icon(183, 46, 91)
+  }
+}
+
+.production-slot {
+  box-shadow: inset 0 0 6px 0 #3fa2de;
+}
+

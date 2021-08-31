@@ -1,0 +1,151 @@
+@import "variables";
+@import "fonts";
+
+.tileContainer {
+  flex-grow: 1;
+  position: relative;
+  margin: $tile-padding - 2;
+
+
+  .node {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  .vertical {
+    @extend .node;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .horizontal {
+    @extend .node;
+
+    display: flex;
+    flex-direction: row;
+  }
+
+  .child {
+    position: relative;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .vertical > .child {
+    display: block;
+  }
+
+  .horizontal > .child {
+    display: inline-block;
+  }
+
+  .child1 {
+    @extend .child;
+  }
+
+  .child2 {
+    @extend .child;
+  }
+
+
+}
+
+.tile {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: $tile-padding;
+  overflow: hidden;
+  background-color: $color-background-component;
+  box-shadow: 0 0 5px fade-out($color-accent-secondary,.50);
+
+  .selector {
+    padding: 30px 15px;
+    height: 100%;
+    background: $color-background-component repeating-linear-gradient(-45deg, transparent, transparent 35px, $color-background-base 35px, $color-background-base 70px);
+  }
+
+  .hovered {
+    @extend .selector;
+    background-color: fade-out($color-accent-secondary, .85);
+  }
+
+  .warning {
+    @extend .font-regular;
+    @extend .type-regular;
+    padding: 4px 8px;
+    color: $color-red;
+  }
+
+
+
+  .frame {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .header {
+    @extend .font-regular;
+    @extend .type-regular;
+    background-color: fade-out($color-accent-secondary, .85);
+    color: $color-text-highlight;
+    padding: 5px 8px;
+    white-space: nowrap;
+    border-bottom: 1px solid fade-out($color-accent-secondary, .80);
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: auto;
+    cursor: pointer;
+  }
+
+  .title {
+    @extend .font-small-headers;
+    display: inline;
+    text-transform: uppercase;
+    line-height: normal;
+  }
+
+  .cmd {
+    @extend .type-very-small;
+    display: inline-block;
+    margin-left: 2px;
+    color: $color-text;
+  }
+
+  .body {
+    @extend .font-regular;
+    @extend .type-regular;
+    color: $color-text-component;
+
+    position: relative;
+    flex-grow: 1;
+  }
+
+  .anchor {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    flex-direction: row;
+  }
+}

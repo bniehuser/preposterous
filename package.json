@@ -12,6 +12,9 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.7",
+    "classnames": "^2.3.1",
+    "moment": "^2.29.1",
+    "node-sass": "^6.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.0",
@@ -22,7 +25,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "types:openapi": "openapi -i https://doc.fnar.net/api.json -o src/services/openapi"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,5 +42,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "openapi-typescript": "^4.0.2",
+    "openapi-typescript-codegen": "^0.9.3",
+    "sass-loader": "^12.1.0"
   }
 }
