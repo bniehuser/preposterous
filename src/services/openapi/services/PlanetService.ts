@@ -84,8 +84,8 @@ export class PlanetService {
     }
 
     /**
-     * Retrieves a list of all planets (minimal payload)
-     * @returns Planet_ListItem Successfully retrieved list of all planets
+     * Retrieves a list of all planet (minimal payload)
+     * @returns Planet_ListItem Successfully retrieved list of all planet
      * @throws ApiError
      */
     public static async getPlanetService(): Promise<Array<Planet_ListItem>> {

@@ -160,7 +160,7 @@ export class RainService {
     }
 
     /**
-     * Retrieves planets for the given UserName
+     * Retrieves planet for the given UserName
      * @param userName The username to retrieve data for
      * @returns Rain_UserPlanet Successfully retrieved payload
      * @throws ApiError

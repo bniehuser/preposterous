@@ -59,7 +59,7 @@ export class SitesService {
     }
 
     /**
-     * Retrieves list of planets user has site data for
+     * Retrieves list of planet user has site data for
      * @param userName The username to retrieve site data for
      * @returns string Successfully retrieved payload.  List of PlanetId returned
      * @throws ApiError
@@ -78,7 +78,7 @@ export class SitesService {
     }
 
     /**
-     * Retrieves list of planets user has site data for
+     * Retrieves list of planet user has site data for
      * @param userName The username to retrieve site data for
      * @param planet Can be any of the following:
      * 1) PlanetId

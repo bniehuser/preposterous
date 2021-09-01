@@ -42,7 +42,7 @@ export class WorkforceService {
     }
 
     /**
-     * Retrieves list of planets where the specified user has Workforce data
+     * Retrieves list of planet where the specified user has Workforce data
      * @param userName The username to retrieve workforce data for
      * @returns string Successfully retrieved payload
      * @throws ApiError

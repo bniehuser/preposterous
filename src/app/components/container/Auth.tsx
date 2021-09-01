@@ -1,13 +1,12 @@
 import React, { FC, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { authorize } from '../../../features/auth/authSlice';
-import { RootState } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 export const Auth: FC = () => {
-  const storedUser = useSelector((state: RootState) => state.auth.username);
+  const storedUser = useAppSelector(state => state.auth.username);
   const [username, setUsername] = useState(storedUser);
   const [passwd, setPasswd] = useState<undefined|string>(undefined);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const doLogin = () => {
     dispatch(authorize({
