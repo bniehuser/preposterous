@@ -15,7 +15,7 @@ export const Icon: FC<Props> = ({
   children
 }) => {
   return (
-    <div className={`icon--${cat}`} style={{width:`${size}px`,height:`${size}px`,fontSize:`${size*.33}px`}}>
+    <div className={`icon--${cat.replace(' ', '-').replace(/[()]/g, '')}`} style={{width:`${size}px`,height:`${size}px`,fontSize:`${size*.33}px`}}>
       {ticker}
       {inset && <span className={'inset'}>{inset}</span>}
     </div>

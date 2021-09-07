@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { LocalMarket_Search } from '../models/LocalMarket_Search';
 import { request as __request } from '../core/request';
 
 export class LocalmarketService {
@@ -140,6 +141,23 @@ export class LocalmarketService {
         const result = await __request({
             method: 'GET',
             path: `/localmarket/company/${company}`,
+        });
+        return result.body;
+    }
+
+    /**
+     * Searches all local markets for a given material
+     * @param localMarketSearchParameters The search paremeters
+     * @returns any Successful
+     * @throws ApiError
+     */
+    public static async postLocalmarketService1(
+        localMarketSearchParameters: LocalMarket_Search,
+    ): Promise<any> {
+        const result = await __request({
+            method: 'POST',
+            path: `/localmarket/search`,
+            body: localMarketSearchParameters,
         });
         return result.body;
     }

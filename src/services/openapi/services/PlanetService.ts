@@ -84,14 +84,27 @@ export class PlanetService {
     }
 
     /**
-     * Retrieves a list of all planet (minimal payload)
-     * @returns Planet_ListItem Successfully retrieved list of all planet
+     * Retrieves a list of all planets (minimal payload)
+     * @returns Planet_ListItem Successfully retrieved list of all planets
      * @throws ApiError
      */
     public static async getPlanetService(): Promise<Array<Planet_ListItem>> {
         const result = await __request({
             method: 'GET',
             path: `/planet/allplanets`,
+        });
+        return result.body;
+    }
+
+    /**
+     * Retrieves all planet data for all planets
+     * @returns any Successfully retrieved payload
+     * @throws ApiError
+     */
+    public static async getPlanetService1(): Promise<any> {
+        const result = await __request({
+            method: 'GET',
+            path: `/planet/allplanets/full`,
         });
         return result.body;
     }
@@ -106,7 +119,7 @@ export class PlanetService {
      * @returns any Successfully retrieved payload
      * @throws ApiError
      */
-    public static async getPlanetService1(
+    public static async getPlanetService2(
         planet: string,
     ): Promise<any> {
         const result = await __request({
@@ -126,7 +139,7 @@ export class PlanetService {
      * @returns any Successfully retrieved payload
      * @throws ApiError
      */
-    public static async getPlanetService2(
+    public static async getPlanetService3(
         planet: string,
     ): Promise<any> {
         const result = await __request({
@@ -146,7 +159,7 @@ export class PlanetService {
      * @returns any Successfully retrieved payload
      * @throws ApiError
      */
-    public static async getPlanetService3(
+    public static async getPlanetService4(
         planet: string,
     ): Promise<any> {
         const result = await __request({

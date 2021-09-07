@@ -1,18 +1,20 @@
 import React, { FC, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { authorize } from '../../../features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 export const Auth: FC = () => {
   const storedUser = useAppSelector(state => state.auth.username);
   const [username, setUsername] = useState(storedUser);
-  const [passwd, setPasswd] = useState<undefined|string>(undefined);
+  const [passwd, setPasswd] = useState<string>('');
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const doLogin = () => {
     dispatch(authorize({
       UserName: username as string,
       Password: passwd as string,
-    }))
+    })).then(() => history.push('/'))
   }
 
   return (

@@ -95,4 +95,17 @@ export class GlobalService {
         return result.body;
     }
 
+    /**
+     * Retrieves workforce needs
+     * @returns any Successfully retrieved payload
+     * @throws ApiError
+     */
+    public static async getGlobalService3(): Promise<any> {
+        const result = await __request({
+            method: 'GET',
+            path: `/global/workforceneeds`,
+        });
+        return result.body;
+    }
+
 }

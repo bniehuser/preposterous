@@ -12,7 +12,9 @@ store.subscribe(() => {
     auth: {
       username: state.auth.username,
       token: state.auth.token,
-    }
+      expires: state.auth.expires,
+    },
+    gameData: state.gameData,
   })
 })
 

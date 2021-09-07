@@ -12,7 +12,7 @@ export const TileNode: FC<Props> = ({o = 'h', c, s}) => {
   const classes = classNames('node', {'horizontal': o === 'h', 'vertical': o === 'v'});
   return (
     <div className={classes}>
-      {c.map((c, i) => <div style={{[dim]: s && s[i] ? s[i] : undefined}} className={'child'}>{c}</div>)}
+      {c.map((c, i) => <div key={i} style={{[dim]: s && s[i] ? s[i] : undefined}} className={'child'}>{c}</div>)}
     </div>
   );
 }

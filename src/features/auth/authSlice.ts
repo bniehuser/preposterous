@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { Auth_LoginAndPassword } from '../../services/openapi';
+import { Auth_LoginAndPassword, OpenAPI } from '../../services/openapi';
 import { AuthService } from '../../services/openapi';
 
 export interface AuthState {
@@ -43,6 +43,7 @@ export const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(authorize.fulfilled, (state, action) => {
+        console.log('we are authorizing HOW MANY TIMES?');
         state.username = action.meta.arg.UserName;
         state.token = action.payload.AuthToken;
         state.isAdministrator = action.payload.IsAdministrator || false;

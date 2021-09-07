@@ -1,13 +1,16 @@
 import React, { FC } from 'react';
-import { useAppSelector } from '../../hooks';
 
-export const Update: FC = () => {
-  const {loadingMessage, loadingPercent} = useAppSelector(s => s.gameData)
+interface Props {
+  loadingMessage?: string,
+  loadingPercent?: number,
+}
+
+export const Update: FC<Props> = ({loadingMessage, loadingPercent}) => {
   return (
     <div className={'overlay progress'}>
       <div className={'message'}>
-        {loadingMessage}
-        {loadingPercent}
+        <div>{loadingMessage}</div>
+        <div>{loadingPercent}%</div>
       </div>
     </div>
   );

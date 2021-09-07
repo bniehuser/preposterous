@@ -42,7 +42,7 @@ export class ProductionService {
     }
 
     /**
-     * Retrieve all the planet where production lines are present for the provided UserName
+     * Retrieve all the planets where production lines are present for the provided UserName
      * @param userName The username to retrieve a planet list for
      * @returns string Successfully retrieved payload
      * @throws ApiError

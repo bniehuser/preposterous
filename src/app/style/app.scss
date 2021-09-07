@@ -99,35 +99,163 @@ html, body {
 }
 
 .icon {
-  &--bui {
+  &--bui, &--building {
     @include icon(52, 140, 160)
   }
-  &--agr {
+
+  &--agr, &--agricultural-products {
     @include icon(92, 18, 18)
   }
-  &--ele {
+
+  &--ele, &--elements {
     @include icon(91, 46, 183)
   }
-  &--conb {
+
+  &--conb, &--consumables-basic {
     @include icon(73, 85, 97)
   }
-  &--conl {
+
+  &--conl, &--consumables-luxury {
     @include icon(9, 15, 15)
   }
-  &--pla {
+
+  &--pla, &--plastics {
     @include icon(26, 60, 162)
   }
-  &--conm {
+
+  &--conm, &--construction-materials {
     @include icon(24, 91, 211)
   }
-  &--conp {
+
+  &--conp, &--construction-parts {
     @include icon(35, 30, 68)
   }
-  &--conf {
+
+  &--conf, &--construction-prefabs {
     @include icon(54, 54, 54)
   }
-  &--chm {
+
+  &--chm, &--chemicals {
     @include icon(183, 46, 91)
+  }
+
+  &--gas, &--gases {
+    @include icon(67, 77, 87)
+  }
+
+  &--fue, &--fuels {
+    @include icon(30, 123, 30)
+  }
+
+  &--min, &--minerals {
+    @include icon(73, 85, 97)
+  }
+
+  &--met, &--metals {
+    @include icon(16, 92, 87)
+  }
+
+  &--all, &--alloys {
+    @include icon(77, 77, 77)
+  }
+
+  &--dro, &--drones {
+    @include icon(91, 46, 183)
+  }
+
+  &--elcd, &--electronic-devices {
+    @include icon(86, 20, 147)
+  }
+
+  &--elcp, &--electronic-parts {
+    @include icon(92, 30, 122)
+  }
+
+  &--elcc, &--electronic-pieces {
+    @include icon(73, 85, 97)
+  }
+
+  &--elcs, &--electronic-systems {
+    @include icon(49, 24, 7)
+  }
+
+  &--ene, &--energy-systems {
+    @include icon(51, 24, 216)
+  }
+
+  &--liq, &--liquids {
+    @include icon(80, 41, 23)
+  }
+
+  &--med, &--medical-equipment {
+    @include icon(9, 15, 15)
+  }
+
+  &--ore, &--ores {
+    @include icon(57, 95, 96)
+  }
+
+  &--she, &--ship-engines {
+    @include icon(14, 57, 14)
+  }
+
+  &--shk, &--ship-kits {
+    @include icon(29, 36, 16)
+  }
+
+  &--shp, &--ship-parts {
+    @include icon(59, 45, 148)
+  }
+
+  &--shs, &--ship-shields {
+    @include icon(132, 82, 34)
+  }
+
+  &--swc, &--software-components {
+    @include icon(67, 77, 87)
+  }
+
+  &--sws, &--software-systems {
+    @include icon(26, 60, 162)
+  }
+
+  &--swt, &--software-tools {
+    @include icon(6, 6, 29)
+  }
+  &--tex, &--textiles {
+    @include icon(80, 41, 23)
+  }
+  &--unp, &--unit-prefabs {
+    @include icon(59, 45, 148)
+  }
+  &--uti, &--utility {
+    @include icon(54, 54, 54)
+  }
+
+
+}
+
+.recipe {
+  display:flex;
+  justify-content: flex-end;
+  margin-bottom:.2rem;
+  background: mix($color-background-component, $color-accent-secondary, 85%);
+  .recipe-arrow, .recipe-time, .recipe-at {
+    display:flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .recipe-arrow, .recipe-time {
+    padding: .2rem;
+  }
+  .recipe-time {
+    background-color: $color-background-component;
+    line-height: 1rem;
+    text-align: center;
+  }
+  .recipe-inputs, .recipe-outputs, .recipe-building, .recipe-duration {
+    display: flex;
+    &>div,&>span { margin: .2em; }
   }
 }
 
@@ -135,3 +263,25 @@ html, body {
   box-shadow: inset 0 0 6px 0 #3fa2de;
 }
 
+.building-name {
+  @extend .font-headers;
+  @extend .type-very-large;
+
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.building-info {
+  display: inline-flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  padding: 4px 8px;
+}
+
+
+.capacity-value {
+  color: $color-text-label;
+  padding: 2px;
+}

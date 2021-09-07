@@ -1,16 +1,16 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import appReducer from '../features/app/appSlice';
 import counterReducer from '../features/counter/counterSlice';
 import authReducer from '../features/auth/authSlice';
 import gameDataReducer from '../features/gameData/gameDataSlice';
-import planetReducer from '../features/planet/planetSlice';
 import { loadState } from './localStorage';
 
 export const store = configureStore({
   reducer: {
+    app: appReducer,
     auth: authReducer,
     counter: counterReducer,
     gameData: gameDataReducer,
-    planets: planetReducer,
   },
   preloadedState: loadState()
 
@@ -24,3 +24,6 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+// some global selectors
+export const appLoading = (state: RootState) => state.app.loading || state.auth.loading || state.gameData.loading;

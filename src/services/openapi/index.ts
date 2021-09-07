@@ -13,6 +13,7 @@ export type { Auth_LoginResponse } from './models/Auth_LoginResponse';
 export type { Auth_PermissionAllowance } from './models/Auth_PermissionAllowance';
 export type { Auth_RevokeApiKey } from './models/Auth_RevokeApiKey';
 export type { Chat_ListItem } from './models/Chat_ListItem';
+export type { LocalMarket_Search } from './models/LocalMarket_Search';
 export type { Planet_ListItem } from './models/Planet_ListItem';
 export type { Planet_SearchRequest } from './models/Planet_SearchRequest';
 export type { Rain_Building } from './models/Rain_Building';
