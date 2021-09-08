@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useState } from 'react';
-import { useDB } from '../../hooks';
 import moment from 'moment';
-import { NadirDBStoreName} from '../../db';
+import React, { FC, useState } from 'react';
+import { NadirDBStoreName } from '../../db';
+import { useDB } from '../../hooks';
 import { useTimedRender } from '../../hooks/useTimedRender';
 
 type DataAgeMap = {
@@ -9,8 +9,8 @@ type DataAgeMap = {
 }
 
 export const Foot: FC = () => {
-  const [,update] = useDB(async db => {
-    const map:DataAgeMap = {};
+  const [, update] = useDB(async db => {
+    const map: DataAgeMap = {};
     const updKeys = await db.getAllKeys('lastUpdated');
     const newMap = await updKeys.reduce(async (a, c) => {
       const map = await a;

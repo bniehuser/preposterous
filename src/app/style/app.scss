@@ -238,7 +238,6 @@ html, body {
 .recipe {
   display:flex;
   justify-content: flex-end;
-  margin-bottom:.2rem;
   background: mix($color-background-component, $color-accent-secondary, 85%);
   .recipe-arrow, .recipe-time, .recipe-at {
     display:flex;
@@ -255,7 +254,7 @@ html, body {
   }
   .recipe-inputs, .recipe-outputs, .recipe-building, .recipe-duration {
     display: flex;
-    &>div,&>span { margin: .2em; }
+    &>div,&>span { margin: 2px; }
   }
 }
 
@@ -263,6 +262,10 @@ html, body {
   box-shadow: inset 0 0 6px 0 #3fa2de;
 }
 
+
+.building-title {
+  padding-bottom: 4px;
+}
 .building-name {
   @extend .font-headers;
   @extend .type-very-large;
@@ -280,8 +283,31 @@ html, body {
   padding: 4px 8px;
 }
 
+.material-title {
+  padding-bottom: 4px;
+}
+.material-name {
+  @extend .font-headers;
+  @extend .type-very-large;
 
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.material-info {
+  display: inline-flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  padding: 4px 8px;
+}
+
+
+.capacity-title {
+  margin: 4px;
+}
 .capacity-value {
   color: $color-text-label;
-  padding: 2px;
+  margin: 4px;
 }

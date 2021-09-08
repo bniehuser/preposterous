@@ -49,30 +49,27 @@ export const BuildingInfo: FC<{building: BuildingData|string}> = ({building: pro
         <label className={''}>Workforces</label>
         <div className={'input'}><div className={'static'}>{['Pioneers','Settlers','Technicians', 'Engineers', 'Scientists'].map(w => {
           const n = building[w as keyof BuildingData];
-          if (n) {
-            return <div>{w} <span className={'capacity-value'}>{n}</span></div>
-          }
-          return null;
+          return n > 0 && <div><span className={'capacity-title'}>{w}</span><span className={'capacity-value'}>{n}</span></div>;
         })}</div></div>
       </div>
       <div className={'form-component passive'}>
-        <label className={'passive'}>Expertise</label>
+        <label className={''}>Expertise</label>
         <div className={'input'}><div className={'static'}>{upperSnakeToTitle(building.Expertise)}</div></div>
       </div>
       <div className={'form-component passive'}>
-        <label className={'passive'}>Area Cost</label>
+        <label className={''}>Area Cost</label>
         <div className={'input'}><div className={'static'}>{building.AreaCost}</div></div>
       </div>
       <div className={'form-component passive'}>
-        <label className={'passive'}>Building Costs</label>
+        <label className={''}>Building Costs</label>
         <div className={'input'}><div className={'static'}><div style={{display:'flex',flexDirection:'row'}}>{costs.map(c => (
-          <Icon key={c.data.Ticker} size={36} cat={c.data.CategoryName} ticker={c.data.Ticker} inset={c.count}/>
+          <div style={{margin:'2px'}}><Icon key={c.data.Ticker} size={33} cat={c.data.CategoryName} ticker={c.data.Ticker} inset={c.count}/></div>
         ))}</div></div></div>
       </div>
       <div className={'form-component passive'}>
-        <label className={'passive'}>Products</label>
+        <label className={''}>Products</label>
         <div className={'input'}><div className={'static'}>{building.Recipes.map(r => (
-            <Recipe key={r.RecipeName} recipe={r}/>
+            <Recipe key={r.RecipeName} size={33} recipe={r}/>
         ))}</div></div>
       </div>
     </div>

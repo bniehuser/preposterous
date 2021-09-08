@@ -1,17 +1,17 @@
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Auth, TileContainer, Update } from './app/components/container';
 import { Foot, Head, Sidebar, TileNode } from './app/components/layout';
 import { Icon, Tile } from './app/components/ui';
 import { BuildingInfo } from './app/components/ui/BuildingInfo';
-import { Recipe } from './app/components/ui/Recipe';
-import { BuildingData } from './app/datatypes';
+import { MaterialInfo } from './app/components/ui/MaterialInfo';
+import { BuildingData, MaterialData } from './app/datatypes';
 import { useAppSelector, useDB } from './app/hooks';
 import './app/style/app.scss';
 import { camelToTitle } from './app/util/strings';
 import { selectToken } from './features/auth/authSlice';
-import { OpenAPI, Recipe_MinimalRecipe } from './services/openapi';
+import { OpenAPI } from './services/openapi';
 
 function App() {
   const token = useAppSelector(selectToken);
@@ -20,15 +20,18 @@ function App() {
   const expires = useAppSelector(state => state.auth.expires ? moment(state.auth.expires).format('MM DD HH:MM:SS') : null);
   const [planetCount, setPlanetCount] = useState<number | undefined>();
   const [buildings, setBuildings] = useState<BuildingData[]>([]);
-  const [currBuilding, setCurrBuilding] = useState<BuildingData|undefined>(undefined);
-  const [useBuilding, setUseBuilding] = useState<boolean>(false);
+  const [currBuilding, setCurrBuilding] = useState<BuildingData | undefined>(undefined);
+  const [materials, setMaterials] = useState<MaterialData[]>([]);
+  const [currMaterial, setCurrMaterial] = useState<MaterialData | undefined>(undefined);
 
   // app won't load at all without db.  this should be a fast operation.
   const [db] = useDB(async db => {
     setPlanetCount(await db.count('planets'));
-    const newBuildings = await db.getAll('buildings');
-    console.log(newBuildings);
+    const newBuildings: BuildingData[] = await db.getAll('buildings');
     setBuildings(newBuildings.filter(b => b.Expertise));
+    const newMaterials: MaterialData[] = await db.getAll('materials');
+    newMaterials.sort((a, b) => a.Ticker > b.Ticker ? 1 : -1)
+    setMaterials(newMaterials);
   }, true);
 
   if (!db) {
@@ -85,19 +88,39 @@ function App() {
                           {token && <TileNode o='v' s={['30%', '70%']} c={[(
                             <TileNode o='h' s={['30%', '70%']} c={[(testTile), (testTile)]}/>
                           ), (
-                            <TileNode o='h' s={['80%', '20%']} c={[(
-                              <Tile title={'db testing'}>
-                                <section className={'content'}>
-                                  <form className={'form'}>
-                                  Recipes For
-                                  <select className="input" value={currBuilding?.Ticker} onChange={e => setCurrBuilding(buildings.find(b => b.Ticker === e.target.value))}>
-                                    {buildings.map(b => <option key={b.Ticker} value={b.Ticker}>({b.Ticker}) {camelToTitle(b.Name)}</option>)}
-                                  </select>: <input type={'checkbox'} checked={useBuilding} onChange={e => setUseBuilding(e.target.checked)}/> use building?<br/>
-                                  </form>
-                                  {currBuilding && <BuildingInfo building={currBuilding}/>}
-                                </section>
+                            <TileNode o='h' s={['50%', '50%']} c={[(
+                              <Tile title={'Building Browser'}>
+                                <form className={'form'}>
+                                  <div className={'form-component active'}>
+                                    <label className={'active'}>Building</label>
+                                    <div className={'input'}>
+                                      <select value={currBuilding?.Ticker}
+                                              onChange={e => setCurrBuilding(buildings.find(b => b.Ticker === e.target.value))}>
+                                        {buildings.map(b => <option key={b.Ticker}
+                                                                    value={b.Ticker}>({b.Ticker}) {camelToTitle(b.Name)}</option>)}
+                                      </select>
+                                    </div>
+                                  </div>
+                                </form>
+                                {currBuilding && <BuildingInfo building={currBuilding}/>}
                               </Tile>
-                            ), (testTile)]}/>
+                            ), (
+                              <Tile title={'Material Browser'}>
+                                <form className={'form'}>
+                                  <div className={'form-component active'}>
+                                    <label className={'active'}>Material</label>
+                                    <div className={'input'}>
+                                      <select value={currMaterial?.Ticker}
+                                              onChange={e => setCurrMaterial(materials.find(b => b.Ticker === e.target.value))}>
+                                        {materials.map(b => <option key={b.Ticker}
+                                                                    value={b.Ticker}>({b.Ticker}) {camelToTitle(b.Name)}</option>)}
+                                      </select>
+                                    </div>
+                                  </div>
+                                </form>
+                                {currMaterial && <MaterialInfo material={currMaterial}/>}
+                              </Tile>
+                            )]}/>
                           )]}/>}
                         </Route>
                       </Switch>

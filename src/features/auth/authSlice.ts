@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { Auth_LoginAndPassword, OpenAPI } from '../../services/openapi';
-import { AuthService } from '../../services/openapi';
+import { Auth_LoginAndPassword, AuthService } from '../../services/openapi';
 
 export interface AuthState {
   username?: string;
@@ -53,7 +52,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const {logout} = authSlice.actions;
 
 export const selectToken = (state: RootState) => state.auth.token;
 
