@@ -1,4 +1,6 @@
 import React from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { saveState } from './app/localStorage';
@@ -15,13 +17,16 @@ store.subscribe(() => {
       expires: state.auth.expires,
     },
     gameData: state.gameData,
+    ui: state.ui,
   })
 })
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
+      <DndProvider backend={HTML5Backend}>
       <App />
+      </DndProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('container')

@@ -19,6 +19,9 @@
     "moment-duration-format": "^2.3.2",
     "node-sass": "^6.0.1",
     "react": "^17.0.2",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-dnd": "^14.0.3",
+    "react-dnd-html5-backend": "^14.0.1",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.1",
@@ -48,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-custom-scrollbars": "^4.0.8",
     "@types/react-router-dom": "^5.1.8",
     "openapi-typescript": "^4.0.2",
     "openapi-typescript-codegen": "^0.9.3",

@@ -7,7 +7,7 @@ interface Props {
   s?: Array<number|string>
 }
 
-export const TileNode: FC<Props> = ({o = 'h', c, s}) => {
+export const TileNodeOld: FC<Props> = ({o = 'h', c, s}) => {
   const dim = o === 'h' ? 'width' : 'height';
   const classes = classNames('node', {'horizontal': o === 'h', 'vertical': o === 'v'});
   return (

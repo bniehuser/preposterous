@@ -53,6 +53,38 @@
     @extend .child;
   }
 
+  .shim-v {
+    position: absolute;
+    background-color: transparent;
+    width: 100%;
+    height: 0;
+    cursor: row-resize;
+  }
+
+  .shim-h {
+    position: absolute;
+    background-color: transparent;
+    height: 100%;
+    top: 0;
+    width: 0;
+    cursor: col-resize;
+  }
+
+  .handle {
+    position: absolute;
+  }
+
+  .shim-v .handle {
+    top: -4px;
+    height: 9px;
+    width: 100%;
+  }
+
+  .shim-h .handle {
+    height: 100%;
+    left: -4px;
+    width: 9px;
+  }
 
 }
 
@@ -140,12 +172,61 @@
     width: 100%;
   }
 
-  .controls {
+  .tile-controls {
     position: absolute;
     top: 0;
     right: 0;
 
     display: flex;
     flex-direction: row;
+
+    .control-container {
+      background-color: transparent;
+      color: $color-text-header;
+    }
+
+    .icon {
+      display: inline-block;
+      padding: 1px 1px;
+    }
+
+    .tile-control-controls {
+      padding: 1px;
+      text-align: right;
+      display: none;
+    }
+
+    .control-container:hover .tile-control-controls {
+      display: block;
+    }
+
+    .control-container:hover .icon {
+      display: none;
+    }
+
+    .control {
+      background-color: transparent;
+      border: none;
+      color: $color-text-header;
+      cursor: pointer;
+    }
+
+    .control:hover {
+      color: $color-text-on-accent-primary;
+      background-color: $color-accent-primary;
+    }
+
+    .control:focus {
+      outline: 0;
+    }
+
+    .disabled {
+      color: $color-text-disabled;
+      cursor: not-allowed;
+    }
+
+    .splitControls {
+      display: inline-block;
+    }
   }
 }

@@ -1,16 +1,16 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import appReducer from '../features/app/appSlice';
-import counterReducer from '../features/counter/counterSlice';
 import authReducer from '../features/auth/authSlice';
 import gameDataReducer from '../features/gameData/gameDataSlice';
+import uiReducer from '../features/ui/uiSlice';
 import { loadState } from './localStorage';
 
 export const store = configureStore({
   reducer: {
     app: appReducer,
     auth: authReducer,
-    counter: counterReducer,
     gameData: gameDataReducer,
+    ui: uiReducer,
   },
   preloadedState: loadState()
 

@@ -123,6 +123,7 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
     if(db && runDB && !LOADING) {
       LOADING = true;
       if(updateFirst) {
+        console.log('should be updating');
         updateDB('all').then(() => runDB(db).then(() => LOADING = false));
       } else {
         runDB(db).then(() => LOADING = false);

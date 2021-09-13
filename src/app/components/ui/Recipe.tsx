@@ -11,7 +11,7 @@ interface Props {
   size?: number
 }
 
-export const Recipe: FC<Props> = memo(({recipe, size = 36}) => {
+export const Recipe: FC<Props> = memo<Props>(({recipe, size = 36}) => {
   // TODO: this does a LOT of DB lookups that are likely TOTALLY UNNECESSARY
   const [inputs, setInputs] = useState<{count: number, data: MaterialData}[]>([]);
   const [outputs, setOutputs] = useState<{count: number, data: MaterialData}[]>([]);

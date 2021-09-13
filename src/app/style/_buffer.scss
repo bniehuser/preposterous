@@ -1,0 +1,68 @@
+@import 'variables';
+
+.buffer {
+  position: absolute;
+
+  background: $color-background-component repeating-linear-gradient(-45deg, transparent, transparent 35px, $color-background-base 35px, $color-background-base 70px);
+  box-shadow: 0 0 5px 1px fade-out($color-accent-primary,.5);
+  padding: 0 5px 5px;
+}
+
+.buffer-header {
+  position: relative;
+  padding: 4px 4px 2px;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.buffer-title {
+  @extend .font-headers;
+  @extend .type-title;
+  display: inline-block;
+  margin-right: 40px;
+  color: $color-text-highlight;
+  text-transform: uppercase;
+}
+
+.buffer-buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.buffer-button {
+  @extend .font-regular;
+  @extend .type-larger;
+  display: inline-block;
+  padding: 2px 6px;
+
+  color: $color-text-header;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-text-on-accent-primary;
+    background-color: $color-accent-hover;
+    text-decoration: none;
+  }
+}
+
+.buffer-disabled {
+  color: $color-text-disabled;
+  cursor: not-allowed;
+}
+
+.buffer-close {
+  @extend .buffer-button;
+}
+
+.buffer-destroy {
+  @extend .buffer-button;
+}
+
+.buffer-body {
+  overflow: hidden;
+  background-color: transparent;
+}

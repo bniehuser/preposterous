@@ -1,7 +1,8 @@
 import moment from 'moment';
 import React, { FC, useState } from 'react';
+import { addBuffer } from '../../../features/ui/uiSlice';
 import { NadirDBStoreName } from '../../db';
-import { useDB } from '../../hooks';
+import { useAppDispatch, useDB } from '../../hooks';
 import { useTimedRender } from '../../hooks/useTimedRender';
 
 type DataAgeMap = {
@@ -21,9 +22,13 @@ export const Foot: FC = () => {
   });
   useTimedRender(10000);
   const [loadStatus, setLoadStatus] = useState<DataAgeMap>({});
+  const dispatch = useAppDispatch();
   return (
     <div className={'foot'}>
       <div>
+        <div className={'foot-item create'} onClick={() => dispatch(addBuffer())}>
+          NEW BFR
+        </div>
         {Object.keys(loadStatus).map(l => (
           <div className={'foot-item create'} key={l} onClick={() => update(l as NadirDBStoreName, true)}>
             {l}: {moment(loadStatus[l]).fromNow()}

@@ -1,72 +1,58 @@
-import moment from 'moment';
-import React, { useState } from 'react';
+import React from 'react';
+import { useDrop } from 'react-dnd';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Auth, TileContainer, Update } from './app/components/container';
-import { Foot, Head, Sidebar, TileNode } from './app/components/layout';
-import { Icon, Tile } from './app/components/ui';
-import { BuildingInfo } from './app/components/ui/BuildingInfo';
-import { MaterialInfo } from './app/components/ui/MaterialInfo';
-import { BuildingData, MaterialData } from './app/datatypes';
-import { useAppSelector, useDB } from './app/hooks';
+import { Foot, Head, Sidebar } from './app/components/layout';
+import { Tile, TileNode, Buffer } from './app/components/ui';
+import { useAppDispatch, useAppSelector, useDB } from './app/hooks';
 import './app/style/app.scss';
-import { camelToTitle } from './app/util/strings';
 import { selectToken } from './features/auth/authSlice';
+import { selectScreen, Tile as TileInfo, TileNode as TileNodeInfo, Buffer as BufferInfo, updateBuffer } from './features/ui/uiSlice';
 import { OpenAPI } from './services/openapi';
 
 function App() {
   const token = useAppSelector(selectToken);
   OpenAPI.TOKEN = token;
   const appState = useAppSelector(state => state.app);
-  const expires = useAppSelector(state => state.auth.expires ? moment(state.auth.expires).format('MM DD HH:MM:SS') : null);
-  const [planetCount, setPlanetCount] = useState<number | undefined>();
-  const [buildings, setBuildings] = useState<BuildingData[]>([]);
-  const [currBuilding, setCurrBuilding] = useState<BuildingData | undefined>(undefined);
-  const [materials, setMaterials] = useState<MaterialData[]>([]);
-  const [currMaterial, setCurrMaterial] = useState<MaterialData | undefined>(undefined);
+  const screen = useAppSelector(selectScreen);
+  const buffers = useAppSelector(state => state.ui.buffers || []);
+  const dispatch = useAppDispatch();
+
+  const [, drop] = useDrop(() => ({
+    accept: 'BUFFER',
+    drop: (item: BufferInfo, monitor) => {
+      const d = monitor.getDifferenceFromInitialOffset();
+      if(d) {
+        console.log('d', d, item.b[0], item.b[1], item.b[0] + d.x, item.b[1] + d.y);
+        dispatch(updateBuffer([item.i, {
+          b: [
+            item.b[0] + d.x,
+            item.b[1] + d.y,
+            item.b[2], item.b[3],
+          ]
+        }]));
+      }
+    }
+  }));
 
   // app won't load at all without db.  this should be a fast operation.
-  const [db] = useDB(async db => {
-    setPlanetCount(await db.count('planets'));
-    const newBuildings: BuildingData[] = await db.getAll('buildings');
-    setBuildings(newBuildings.filter(b => b.Expertise));
-    const newMaterials: MaterialData[] = await db.getAll('materials');
-    newMaterials.sort((a, b) => a.Ticker > b.Ticker ? 1 : -1)
-    setMaterials(newMaterials);
-  }, true);
+  const [db] = useDB(async () => undefined, true);
 
   if (!db) {
     console.log('db is null?');
     return null;
   } // should never get here
 
-  const testTile = (
-    <Tile title={'Test'}>
-      <section className={'content'}>
-        <p>({planetCount}) No really this is a test: {token} {expires}</p>
-        <div style={{display: 'flex', flexWrap: 'wrap'}}>
-          <Icon cat={'agr'} ticker={'RCO'}/>
-          <Icon cat={'conm'} ticker={'MCG'}/>
-          <Icon cat={'conp'} ticker={'TRU'}/>
-          <Icon cat={'conf'} ticker={'BSE'}/>
-          <Icon cat={'conb'} ticker={'RAT'} inset={123}/>
-          <Icon cat={'conl'} ticker={'PWO'}/>
-          <Icon cat={'pla'} ticker={'PG'}/>
-          <Icon size={32} cat={'chm'} ticker={'FLX'}/>
-          <Icon size={28} cat={'bui'} ticker={'REF'}/>
-        </div>
-      </section>
-    </Tile>
-  );
-
   return (
     <BrowserRouter>
       <div tabIndex={-1} style={{height: '100%'}}>
         <div tabIndex={-1} style={{height: '100%'}}>
-          <div className={'container'}>
+          <div className={'container'} ref={drop}>
             <Sidebar/>
             {appState.loading ?
-              <div className={'body'}><Update loadingMessage={appState.loadingMessage}
-                                              loadingPercent={appState.loadingPercent}/></div>
+              <div className={'body'} style={{position: 'relative'}}><Update loadingMessage={appState.loadingMessage}
+                                                                             loadingPercent={appState.loadingPercent}/>
+              </div>
               :
               <div className={'body'}>
                 <Head/>
@@ -85,49 +71,19 @@ function App() {
                         <Route path={'/update'}><Update/></Route>
                         <Route path={'/login'}><Auth/></Route>
                         <Route path={'/'}>
-                          {token && <TileNode o='v' s={['30%', '70%']} c={[(
-                            <TileNode o='h' s={['30%', '70%']} c={[(testTile), (testTile)]}/>
-                          ), (
-                            <TileNode o='h' s={['50%', '50%']} c={[(
-                              <Tile title={'Building Browser'}>
-                                <form className={'form'}>
-                                  <div className={'form-component active'}>
-                                    <label className={'active'}>Building</label>
-                                    <div className={'input'}>
-                                      <select value={currBuilding?.Ticker}
-                                              onChange={e => setCurrBuilding(buildings.find(b => b.Ticker === e.target.value))}>
-                                        {buildings.map(b => <option key={b.Ticker}
-                                                                    value={b.Ticker}>({b.Ticker}) {camelToTitle(b.Name)}</option>)}
-                                      </select>
-                                    </div>
-                                  </div>
-                                </form>
-                                {currBuilding && <BuildingInfo building={currBuilding}/>}
-                              </Tile>
-                            ), (
-                              <Tile title={'Material Browser'}>
-                                <form className={'form'}>
-                                  <div className={'form-component active'}>
-                                    <label className={'active'}>Material</label>
-                                    <div className={'input'}>
-                                      <select value={currMaterial?.Ticker}
-                                              onChange={e => setCurrMaterial(materials.find(b => b.Ticker === e.target.value))}>
-                                        {materials.map(b => <option key={b.Ticker}
-                                                                    value={b.Ticker}>({b.Ticker}) {camelToTitle(b.Name)}</option>)}
-                                      </select>
-                                    </div>
-                                  </div>
-                                </form>
-                                {currMaterial && <MaterialInfo material={currMaterial}/>}
-                              </Tile>
-                            )]}/>
-                          )]}/>}
+
+                          {token && (typeof (screen.t as any).c === 'number'
+                            ? <Tile p={[]} tileInfo={screen.t as TileInfo}/>
+                            : <TileNode p={[]} nodeInfo={screen.t as TileNodeInfo}/>)}
                         </Route>
                       </Switch>
                     </TileContainer>
                   </div>
                 </div>
                 <Foot/>
+                <div>
+                  {buffers.map((b, i) => <Buffer bufferInfo={b} z={i}/>)}
+                </div>
               </div>
             }
           </div>
