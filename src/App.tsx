@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Auth, TileContainer, Update } from './app/components/container';
 import { Foot, Head, Sidebar } from './app/components/layout';
-import { Tile, TileNode, Buffer } from './app/components/ui';
+import { Tile, TileNode } from './app/components/ui';
+import { Buffers } from './app/components/ui/Buffers';
 import { useAppDispatch, useAppSelector, useDB } from './app/hooks';
 import './app/style/app.scss';
 import { selectToken } from './features/auth/authSlice';
@@ -15,8 +16,8 @@ function App() {
   OpenAPI.TOKEN = token;
   const appState = useAppSelector(state => state.app);
   const screen = useAppSelector(selectScreen);
-  const buffers = useAppSelector(state => state.ui.buffers || []);
   const dispatch = useAppDispatch();
+  const [pathRef] = useState([]);
 
   const [, drop] = useDrop(() => ({
     accept: 'BUFFER',
@@ -73,17 +74,15 @@ function App() {
                         <Route path={'/'}>
 
                           {token && (typeof (screen.t as any).c === 'number'
-                            ? <Tile p={[]} tileInfo={screen.t as TileInfo}/>
-                            : <TileNode p={[]} nodeInfo={screen.t as TileNodeInfo}/>)}
+                            ? <Tile p={pathRef} tileInfo={screen.t as TileInfo}/>
+                            : <TileNode p={pathRef} nodeInfo={screen.t as TileNodeInfo}/>)}
                         </Route>
                       </Switch>
                     </TileContainer>
                   </div>
                 </div>
                 <Foot/>
-                <div>
-                  {buffers.map((b, i) => <Buffer bufferInfo={b} z={i}/>)}
-                </div>
+                <Buffers/>
               </div>
             }
           </div>

@@ -173,7 +173,8 @@ export const uiSlice = createSlice({
       state.buffers = state.buffers.filter(b => b.i !== action.payload);
     },
     bufferToTop: (state, action: PayloadAction<number>) => {
-      state.buffers = [...state.buffers.filter(b => b.i !== action.payload), state.buffers.find(b => b.i === action.payload)].filter(Boolean) as Buffer[];
+      const i = state.buffers.findIndex(b => b.i===action.payload)
+      state.buffers.push(state.buffers.splice(i, 1)[0]);
     },
     addScreen: (state, action: PayloadAction<string>) => {
       state.screens.push({n: action.payload, t: {c: TileType.PICKER}})

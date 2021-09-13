@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { FC, useState } from 'react';
 import { useDrop } from 'react-dnd';
-import { assignTile, emptyTile, Path, Tile, TileType } from '../../../../features/ui/uiSlice';
+import { assignTile, bufferToTop, emptyTile, Path, Tile, TileType } from '../../../../features/ui/uiSlice';
 import { useAppDispatch } from '../../../hooks';
 
 interface Props {
@@ -30,6 +30,9 @@ export const Picker: FC<Props> = ({p, i, s}) => {
       console.log(item);
       dispatch(emptyTile([item[0], item[2]]));
       dispatch(assignTile([p, item[1], i]));
+      if(i) {
+        dispatch(bufferToTop(i))
+      }
     },
   }))
 

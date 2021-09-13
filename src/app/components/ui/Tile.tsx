@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import { useDrag } from 'react-dnd';
-import { assignTile, emptyTile, Path, removeTile, setDragTile, splitTile, Tile as TileInfo, TileType } from '../../../features/ui/uiSlice';
+import { emptyTile, Path, removeTile, splitTile, Tile as TileInfo, TileType } from '../../../features/ui/uiSlice';
 import { useAppDispatch } from '../../hooks';
 import { getTile } from '../../util/ui';
 import { Gear } from './icon/Gear';

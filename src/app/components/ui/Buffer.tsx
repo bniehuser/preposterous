@@ -1,11 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import {
   Tile as TileInfo,
   TileNode as TileNodeInfo,
   Buffer as BufferInfo,
   removeBuffer,
-  assignTile,
   updateBuffer,
   bufferToTop
 } from '../../../features/ui/uiSlice';
@@ -19,9 +18,14 @@ interface Props {
   z: number;
 }
 
-export const Buffer: FC<Props> = ({bufferInfo, z}) => {
+export const Buffer: FC<Props> = React.memo<Props>(({bufferInfo, z}) => {
   const dispatch = useAppDispatch();
-  const [l, t, w, h] = bufferInfo.b;
+  const [[l, t, w, h], setBox] = useState<[number, number, number, number]>(bufferInfo.b);
+  const [pathRef] = useState([]);
+  useEffect(() => {
+    console.log('new buffer info?');
+    setBox(bufferInfo.b);
+  }, [bufferInfo.b]);
 
   const resize = (e: React.MouseEvent, t: 'h'|'v'|'b') => {
     e.preventDefault();
@@ -58,8 +62,8 @@ export const Buffer: FC<Props> = ({bufferInfo, z}) => {
       </div>
       <div id={`buffer_${bufferInfo.i}`} style={{position:'relative',userSelect:'auto', width:w+'px', height:h+'px', margin:0}} className={'tileContainer'}>
       {typeof (bufferInfo.t as any).c === 'number'
-        ? <Tile i={bufferInfo.i} p={[]} tileInfo={bufferInfo.t as TileInfo}/>
-        : <TileNode i={bufferInfo.i} p={[]} nodeInfo={bufferInfo.t as TileNodeInfo}/>}
+        ? <Tile i={bufferInfo.i} p={pathRef} tileInfo={bufferInfo.t as TileInfo}/>
+        : <TileNode i={bufferInfo.i} p={pathRef} nodeInfo={bufferInfo.t as TileNodeInfo}/>}
         {/*resize shims go here*/}
 
         <div onMouseDown={e => resize(e, 'h')} style={{position: 'absolute', width: '10px', height: '100%', top: 0, right: '-5px', cursor: 'col-resize'}}/>
@@ -68,4 +72,4 @@ export const Buffer: FC<Props> = ({bufferInfo, z}) => {
       </div>
     </div>
   );
-}
+});
