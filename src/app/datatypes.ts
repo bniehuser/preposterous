@@ -126,3 +126,47 @@ export interface MaterialData {
   UserNameSubmitted: string;
   Timestamp: string;
 }
+
+export interface CXOrderData {
+  OrderId: string;
+  CompanyId: string;
+  CompanyName: string;
+  CompanyCode: string;
+  ItemCount: number|null; // MM is null
+  ItemCost: number;
+}
+
+export interface CXListingData {
+  BuyingOrders: CXOrderData[];
+  SellingOrders: CXOrderData[];
+  CXDataModelId: string;
+  MaterialName: string;
+  MaterialTicker: string;
+  MaterialId: string;
+  ExchangeName: string;
+  ExchangeCode: string;
+  Currency: CurrencyId;
+  Previous: number;
+  PriceTimeEpochMs: number;
+  High: number;
+  AllTimeHigh: number;
+  Low: number;
+  AllTimeLow: number;
+  Ask: number|null;
+  AskCount: number|null;
+  Bid: number|null;
+  BidCount: number|null;
+  Supply: number;
+  Demand: number;
+  Traded: number;
+  VolumeAmount: number;
+  PriceAverage: number;
+  NarrowPriceBandLow: number;
+  NarrowPriceBandHigh: number;
+  WidePriceBandLow: number;
+  WidePriceBandHigh: number;
+  MMBuy: number|null;
+  MMSell: number|null;
+  UserNameSubmitted: string;
+  Timestamp: string;
+}

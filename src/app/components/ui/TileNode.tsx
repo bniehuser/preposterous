@@ -40,7 +40,7 @@ export const TileNode: FC<Props> = React.memo<Props>(({p, nodeInfo, i}) => {
   return (
     <div ref={ref} className={classes}>
       {nodeInfo.c.map((c, idx) => <div key={idx} style={{[dim]: (r[idx]*100)+'%'}} className={'child'}>
-        {typeof (c as any).c === 'number' ? <Tile i={i} p={paths[i as 0|1]} tileInfo={c as TileInfo}/> : <TileNode i={i} p={paths[i as 0|1]} nodeInfo={c as TileNodeInfo}/>}
+        {typeof (c as any).c === 'number' ? <Tile i={i} p={paths[idx as 0|1]} tileInfo={c as TileInfo}/> : <TileNode i={i} p={paths[idx as 0|1]} nodeInfo={c as TileNodeInfo}/>}
       </div>)}
       <div className={`shim-${nodeInfo.o}`} style={{[nodeInfo.o === 'h'?'left':'top']:(nodeInfo.r * 100)+'%'}}><div className={'handle'} onMouseDown={resize}/></div>
     </div>

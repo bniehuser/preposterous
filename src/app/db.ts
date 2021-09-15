@@ -1,8 +1,8 @@
 import * as idb from 'idb';
 import { Recipe_MinimalRecipe } from '../services/openapi';
-import { BuildingData, MaterialData, PlanetData } from './datatypes';
+import { BuildingData, CXListingData, MaterialData, PlanetData } from './datatypes';
 
-export type NadirDBStoreName = 'planets'|'recipes'|'buildings'|'materials';
+export type NadirDBStoreName = 'planets'|'recipes'|'buildings'|'materials'|'cx';
 
 export interface NadirDB extends idb.DBSchema {
   planets: {
@@ -33,6 +33,15 @@ export interface NadirDB extends idb.DBSchema {
       name: string;
     }
   };
+  cx: {
+    key: string;
+    value: CXListingData;
+    indexes: {
+      cxTicker: [string, string];
+      ticker: string;
+      cx: string;
+    }
+  }
   lastUpdated: {
     key: NadirDBStoreName;
     value: number;
@@ -66,6 +75,11 @@ export const initDB = async () => {
         materialStore.createIndex('ticker', 'Ticker');
         materialStore.createIndex('name', 'Name');
         materialStore.createIndex('category', ['CategoryName', 'CategoryId']);
+
+        const cxStore = db.createObjectStore('cx', {keyPath: 'CXDataModelId'});
+        cxStore.createIndex('cxTicker', ['MaterialTicker', 'ExchangeCode']);
+        cxStore.createIndex('ticker', 'MaterialTicker');
+        cxStore.createIndex('cx', 'ExchangeCode');
 
         db.createObjectStore('lastUpdated');
       }

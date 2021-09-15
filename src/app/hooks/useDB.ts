@@ -2,21 +2,22 @@ import { IDBPDatabase } from 'idb';
 import { useCallback, useEffect, useState } from 'react';
 import { loading, loadingMessage, loadingState } from '../../features/app/appSlice';
 import {
-  BuildingService,
+  BuildingService, ExchangeService,
   MaterialService,
   PlanetService,
   Recipe_MinimalRecipe,
   RecipesService
 } from '../../services/openapi';
-import { BuildingData, MaterialData, PlanetData } from '../datatypes';
+import { BuildingData, CXListingData, MaterialData, PlanetData } from '../datatypes';
 import { initDB, NadirDB, NadirDBStoreName } from '../db';
 import { useAppDispatch } from '../hooks';
 
 const DATA_TIMEOUT = {
-  'planets': 1 * 24 * 60 * 60 * 1000,
-  'recipes': 7 * 24 * 60 * 60 * 1000,
-  'buildings': 7 * 24 * 60 * 60 * 1000,
-  'materials': 7 * 24 * 60 * 60 * 1000,
+  'planets': 1 * 24 * 60 * 60 * 1000, // daily
+  'recipes': 7 * 24 * 60 * 60 * 1000, // weekly
+  'buildings': 7 * 24 * 60 * 60 * 1000, // weekly
+  'materials': 7 * 24 * 60 * 60 * 1000, // weekly
+  'cx': 1 * 60 * 60 * 1000, // hourly
 }
 
 let DB: IDBPDatabase<NadirDB>;
@@ -96,6 +97,21 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
             const materials = await MaterialService.getMaterialService();
             materials.forEach((m: MaterialData) => m.MatId ? db.put('materials', m) : console.log('no matid', m));
             await db.put('lastUpdated', now, 'materials');
+          } catch(e) {
+            dispatch(loadingMessage('Error: '+e.toString()))
+            throw e;
+          }
+        }
+      }
+      if (stores.indexOf('cx') > -1 || store === 'all') {
+        dispatch(loadingMessage('Loading CX Data...'));
+        const lu = await db.get('lastUpdated', 'cx') || 0;
+        if ((lu < now - DATA_TIMEOUT['cx']) || force) {
+          // get planets from api
+          try {
+            const cx = await ExchangeService.getExchangeService2();
+            cx.forEach((l: CXListingData) => l.CXDataModelId ? db.put('cx', l) : console.log('no data id', l));
+            await db.put('lastUpdated', now, 'cx');
           } catch(e) {
             dispatch(loadingMessage('Error: '+e.toString()))
             throw e;

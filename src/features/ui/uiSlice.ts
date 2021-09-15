@@ -10,6 +10,7 @@ export enum TileType {
   BUI,
   MAT,
   BROWSE,
+  PRICE,
 
 }
 
