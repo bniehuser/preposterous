@@ -99,6 +99,15 @@
   background-color: $color-background-component;
   box-shadow: 0 0 5px fade-out($color-accent-secondary,.50);
 
+  .tile-subsection {
+    margin-bottom: 4px !important; // GROSS, but it overrides for other things that specify margin
+  }
+
+  .tile-break {
+    border-bottom: 1px solid $color-text-label;
+    margin-bottom: 4px;
+  }
+
   .selector {
     padding: 30px 15px;
     height: 100%;

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Recipe_MinimalInput, Recipe_MinimalRecipe } from '../../../../services/openapi';
-import { BuildingData, MaterialData } from '../../../datatypes';
+import { BuildingData, CXListingData, MaterialData } from '../../../datatypes';
 import { useDB } from '../../../hooks';
 import { camelToTitle, toTitle } from '../../../util/strings';
 import { Icon } from '../Icon';
@@ -13,6 +13,7 @@ export const MaterialInfo: FC<{ material: MaterialData | string }> = ({material:
   const [products, setProducts] = useState<Recipe_MinimalRecipe[]>([])
   const [builders, setBuilders] = useState<BuildingData[]>([])
   const [matCache, setMatCache] = useState<{ [k: string]: MaterialData }>({});
+  const [listings, setListings] = useState<CXListingData[]>([]);
 
   useEffect(() => {
     if (db && typeof propMaterial === 'string') {
@@ -44,8 +45,10 @@ export const MaterialInfo: FC<{ material: MaterialData | string }> = ({material:
             }
           }
         }
+        const newListings = await db.getAllFromIndex('cx', 'ticker', material.Ticker);
         setBuilders(newBuilders);
         setMatCache(newMatCache);
+        setListings(newListings);
       }
       getIt()
     }
@@ -54,10 +57,48 @@ export const MaterialInfo: FC<{ material: MaterialData | string }> = ({material:
   return material ? (
     <div className={'material-info form'}>
       <div className={'material-title'}>
-        <div style={{float: 'left', marginRight: '.2rem'}}><Icon cat={'bui'} ticker={material.Ticker}/></div>
+        <div style={{float: 'left', marginRight: '.2rem'}}><Icon cat={material.CategoryName} ticker={material.Ticker}/></div>
         <div className={'material-name'}>{camelToTitle(material.Name)}</div>
         <div><em>(description?)</em></div>
       </div>
+      <div className={'tile-break'}/>
+      <div className={'tile-subsection'}>
+      <table className={'table'}>
+        <thead>
+        <tr>
+          <th>Exchange</th>
+          <th>Price</th>
+          <th>Ask</th>
+          <th>Bid</th>
+          <th>Supply</th>
+          <th>Demand</th>
+        </tr>
+        </thead>
+        <tbody>
+        {listings.map((l, i) => (
+          <tr key={i}>
+            <td className={l.ExchangeCode}><strong>{l.ExchangeCode}</strong></td>
+            {l.Previous && <td className={'number'}>
+              <span className={'text-bright'}>
+              {l.Price.toFixed(2)}</span>
+              <span style={{textAlign:'initial', display:'inline-block', minWidth:'28px', paddingLeft:'4px'}}>{l.Currency}</span>
+              <span style={{minWidth:'12px', display:'inline-block', textAlign:'center'}}>
+                {l.Previous > l.Price && <span className={'text-danger'}>▼</span>}
+                {l.Previous < l.Price && <span className={'text-success'}>▲</span>}
+                {l.Previous === l.Price && <span>▸</span>}
+              </span>
+            </td>}
+            {!l.Previous && <td className={'number'}>--<span style={{textAlign:'initial', display:'inline-block', minWidth:'40px', paddingLeft:'4px'}}>{l.Currency}</span></td>}
+            <td className={'number'}>{l.Ask ? l.Ask.toFixed(2) : '--'}</td>
+            <td className={'number'}>{l.Bid ? l.Bid.toFixed(2) : '--'}</td>
+            <td className={'number'}>{l.Supply}</td>
+            <td className={'number'}>{l.Demand}</td>
+          </tr>
+        ))}
+        </tbody>
+      </table>
+      </div>
+      <div className={'stack-horiz tile-subsection'}>
       <div className={'form-component passive'}>
         <label className={''}>Ticker</label>
         <div className={'input'}>
@@ -88,37 +129,39 @@ export const MaterialInfo: FC<{ material: MaterialData | string }> = ({material:
           <div className={'static'}>{makers.length ? 'no' : 'yes'}</div>
         </div>
       </div>
+      </div>
+      <div className={'tile-break'}/>
       {makers.length > 0 && (
-        <div className={'form-component passive'}>
+        <div key={'makers'} className={'form-component passive'}>
           <label className={''}>Production</label>
           <div className={'input'}>
-            <div className={'static'}>{makers.map(r => (
-              <Recipe key={r.RecipeName} size={33} recipe={r}/>
+            <div className={'static'}>{makers.map((r, i) => (
+              <Recipe key={i} size={33} recipe={r}/>
             ))}</div>
           </div>
         </div>
       )}
       {products.length > 0 && (
-        <div className={'form-component passive'}>
+        <div key={'products'} className={'form-component passive'}>
           <label className={''}>Wrought Products</label>
           <div className={'input'}>
-            <div className={'static'}>{products.map(r => (
-              <Recipe key={r.RecipeName} size={33} recipe={r}/>
+            <div className={'static'}>{products.map((r, i) => (
+              <Recipe key={i} size={33} recipe={r}/>
             ))}</div>
           </div>
         </div>
       )}
       {builders.length > 0 && (
-        <div className={'form-component passive'}>
+        <div key={'builders'} className={'form-component passive'}>
           <label className={''}>Building material</label>
           <div className={'input'}>
             <div className={'static'}>{builders.map(b => (
-              <div className={'recipe'}>
+              <div key={b.Ticker} className={'recipe'}>
                 <div className={'recipe-inputs'}>
-                  {b.BuildingCosts.map(c => {
+                  {b.BuildingCosts.map((c, i) => {
                     const m = matCache[c.CommodityTicker];
                     return m &&
-                        <Icon key={m.Ticker} size={33} cat={m.CategoryName} ticker={m.Ticker} inset={c.Amount}/>;
+                        <Icon key={i} size={33} cat={m.CategoryName} ticker={m.Ticker} inset={c.Amount}/>;
                   })}
                 </div>
                 <div className={'recipe-outputs'}>

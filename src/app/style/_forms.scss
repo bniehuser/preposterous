@@ -21,6 +21,32 @@
 
   }
 
+  .stack-horiz {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin-bottom: 2px;
+
+    .form-component {
+      flex-grow: 1;
+      flex-basis: content;
+      display: flex;
+      flex-direction: column;
+      margin-bottom:0;
+      margin-right: 2px;
+      &:last-child {
+        margin-right: 0;
+      }
+
+      label {
+        min-width: auto;
+      }
+    }
+    .input {
+      text-align: initial;
+    }
+  }
+
   .input {
     flex-grow: 1;
     text-align: right;

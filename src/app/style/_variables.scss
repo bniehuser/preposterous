@@ -1,23 +1,27 @@
-$color-orange: #f0ad4e;
+$color-orange-orig: #f0ad4e;
+$color-orange: #E1C16E;
 $color-red: #d9534f;
 $color-green: #5cb85c;
 $color-blue: #3fa2de;
 
+$color-tan: #bda885;
+$color-exp: #706350;
+
 $color-background-base: #262626;
-$color-text: #999;
+$color-text: #999999;
 $color-text-light: #dddddd;
 $color-text-highlight: #eee;
 $color-text-disabled: #444;
 $color-text-on-accent-primary: #272727;
 $color-text-component: #bbb;
-$color-text-label: #777;
+$color-text-label: #777777;
 $color-text-header: $color-text-component;
 
-$color-background-component: #222;
+$color-background-component: #222222;
 
 
 $color-accent-primary: $color-orange;
-$color-accent-secondary: $color-blue;
+$color-accent-secondary: $color-exp;
 $color-accent-hover: $color-orange;
 
 $color-link: $color-blue;
@@ -27,3 +31,9 @@ $color-link-hover: $color-orange;
 $form-component-height: 17px;
 
 $tile-padding: 6px;
+
+$color-hover-background: fade-out(#fff, .85);
+
+// TODO: these are not right; should be based on another color
+$color-background-table: mix($color-background-component, $color-accent-secondary, 95%);
+$color-border-table: mix($color-background-component, $color-accent-secondary, 67.36%); // was #2B485A;

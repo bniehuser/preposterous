@@ -13,11 +13,10 @@ interface Props {
 export const Browse: FC<Props> = ({m, i}) => {
   const [values, setValues] = useState<(BuildingData | MaterialData)[]>([]);
   const [value, setValue] = useState<BuildingData | MaterialData | undefined>(undefined);
-  const [mode, setMode] = useState(m);
+  const [mode] = useState(m); // TODO: implement mode switcher
 
   useEffect(() => {
     const doIt = async () => {
-      const val = value;
       setValue(undefined);
       let newVals: (BuildingData | MaterialData)[] = [];
       if (mode === 'BUI') {
@@ -27,7 +26,7 @@ export const Browse: FC<Props> = ({m, i}) => {
         newVals.sort((a, b) => a.Ticker > b.Ticker ? 1 : -1)
       }
       setValues(newVals);
-      if(i && !val) {
+      if(i) {
         setValue(newVals.find(v => v.Ticker === i))
       }
     }

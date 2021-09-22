@@ -4,6 +4,7 @@ import { Browse } from '../components/ui/tiles/Browse';
 import { BuildingInfo } from '../components/ui/tiles/BuildingInfo';
 import { MaterialInfo } from '../components/ui/tiles/MaterialInfo';
 import { Picker } from '../components/ui/tiles/Picker';
+import { PlanetSearch } from '../components/ui/tiles/PlanetSearch';
 import { PriceInfo } from '../components/ui/tiles/PriceInfo';
 import { TestTile } from '../components/ui/tiles/TestTile';
 import { db } from '../db';
@@ -39,6 +40,8 @@ export const getTile = async (ti: TileInfo, p: Path, i?: number) => {
       return {t: `Material: ${camelToTitle(m.Name)}`, d: <MaterialInfo material={m}/>};
     case TileType.TEST:
       return {t: 'Test', d: <TestTile/>};
+    case TileType.PLANETSEARCH:
+      return {t: 'Planet Search', d: <PlanetSearch/>};
     case TileType.PICKER:
     default:
       return {t: '', d: <Picker s={ti.s} p={p} i={i}/>};

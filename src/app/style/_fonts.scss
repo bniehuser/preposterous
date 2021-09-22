@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Droid+Sans:400,700');
 @import url('https://fonts.googleapis.com/css?family=Advent+Pro:100,200,300,400,500,600,700');
 @import url('https://fonts.googleapis.com/css?family=Audiowide');
+@import 'variables';
 
 .font-smoothing {
   -webkit-font-smoothing: antialiased;
@@ -59,4 +60,37 @@
 .type-title {
   font-size: 12px;
   line-height: 1.1;
+}
+
+.text-regular {
+  color: $color-text;
+}
+
+.text-bright {
+  color: $color-text-highlight;
+}
+
+.text-secondary {
+  color: $color-text-label;
+}
+
+.text-disabled {
+  color: $color-text-disabled;
+}
+
+.text-success {
+  color: $color-green;
+}
+
+.text-danger {
+  color: $color-red;
+}
+
+.text-warning {
+  color: $color-orange;
+}
+
+.highlight {
+  background-color: $color-accent-primary;
+  color: $color-text-on-accent-primary;
 }

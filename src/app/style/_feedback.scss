@@ -116,3 +116,10 @@
     background-color: $color-orange;
   }
 }
+
+.subtle-load {
+  td:nth-child(odd) { background: transparent !important; } // i hate you sometimes, css
+  $color-dark: $color-background-table;
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 35px, $color-dark 35px, $color-dark 70px);
+  animation: background-stripes .5s linear infinite;
+}

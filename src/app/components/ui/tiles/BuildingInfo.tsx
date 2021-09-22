@@ -45,6 +45,8 @@ export const BuildingInfo: FC<{building: BuildingData|string}> = ({building: pro
         <div className={'building-name'}>{camelToTitle(building.Name)}</div>
         <div>{upperSnakeToTitle(building.Expertise || '')} <em>(description?)</em></div>
       </div>
+      <div className={'tile-break'}/>
+      <div className={'tile-subsection stack-horiz'}>
       <div className={'form-component passive'}>
         <label className={''}>Workforces</label>
         <div className={'input'}><div className={'static'}>{['Pioneers','Settlers','Technicians', 'Engineers', 'Scientists'].map(w => {
@@ -60,6 +62,8 @@ export const BuildingInfo: FC<{building: BuildingData|string}> = ({building: pro
         <label className={''}>Area Cost</label>
         <div className={'input'}><div className={'static'}>{building.AreaCost}</div></div>
       </div>
+      </div>
+      <div className={'tile-break'}/>
       <div className={'form-component passive'}>
         <label className={''}>Building Costs</label>
         <div className={'input'}><div className={'static'}><div style={{display:'flex',flexDirection:'row'}}>{costs.map(c => (

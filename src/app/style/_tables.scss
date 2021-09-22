@@ -1,0 +1,161 @@
+@import "variables";
+
+.table {
+  @extend .type-regular;
+  @extend .font-regular;
+
+  table-layout: auto;
+  border-collapse: collapse;
+  width: 100%;
+
+  &.sticky {
+    thead {
+      position: sticky;
+      top:0;
+      z-index:4;
+      background-color: $color-background-component;
+      .table-header-cell-container {
+        padding:0;
+        margin:-30px
+      }
+      .table-header-content {
+        width:100%;
+        z-index:3;
+        box-sizing:content-box;
+        margin: -20px; // cover any nasty gaps
+        padding: 20px; // compensates for normal table padding
+        background-color: $color-background-component;
+      }
+      &:after {
+        content: '';
+        display:block;
+        position:absolute;
+        bottom:0;
+        width:100%;
+        height: 1px;
+        background-color: $color-border-table;
+      }
+    }
+  }
+
+  caption {
+    text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+    padding: 6px 4px 2px;
+    background-color: fade-out($color-accent-secondary, .85);
+    color: $color-text-header;
+  }
+
+  th, td {
+    font-weight: normal;
+    padding: 5px 8px;
+  }
+
+  thead {
+    th {
+      border-bottom: 1px solid $color-border-table;
+      text-align: left;
+      padding: 5px 8px 2px;
+    }
+  }
+
+  tbody {
+    border-bottom: 1px solid $color-border-table;
+
+    th {
+      border-bottom: 1px solid $color-border-table;
+      text-align: left;
+      padding: 5px 8px 2px;
+      font-weight: bold;
+    }
+
+    td {
+      padding: 2px 8px;
+      border-left: 1px solid $color-border-table;
+    }
+
+    td:first-child {
+      border-left: none;
+    }
+
+    td:nth-child(odd) {
+      background-color: $color-background-table;
+    }
+
+    tr:hover {
+      td {
+        background-color: $color-hover-background;
+      }
+    }
+  }
+
+  tfoot {
+    border-bottom: 1px solid $color-border-table;
+
+    th {
+      border-bottom: 1px solid $color-border-table;
+      text-align: left;
+      padding: 5px 8px 2px;
+      font-weight: bold;
+    }
+
+    td {
+      padding: 2px 8px;
+      border-left: 1px solid $color-border-table;
+    }
+
+    td:first-child {
+      border-left: none;
+    }
+
+    td:nth-child(odd) {
+      background-color: $color-background-table;
+    }
+  }
+
+  .number { text-align: right; }
+  .symbol { text-align: center; }
+}
+
+.bg-meter {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  z-index: 0;
+  &.icon {
+    overflow: hidden;
+    opacity: .7;
+    * {
+      z-index: 0;
+    }
+  }
+  &.left {
+    left: 3px;
+  }
+  &.right {
+    right: 3px;
+  }
+  &.pos {
+    left: 50%;
+    background-color: fade-out($color-green, .7);
+  }
+  &.neg {
+    right: 50%;
+    background-color: fade-out($color-red, .7);
+  }
+}
+.top-text {
+  position: absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  top: 1px;
+  bottom: 1px;
+  height:100%;
+  left: 1px;
+  right: 1px;
+  z-index: 2;
+  text-shadow: 0 0 8px rgba(0,0,0,1);
+}

@@ -13,6 +13,22 @@ interface BuildRequirement {
 type IndustryId = 'CHEMISTRY'|'CONSTRUCTION'|'ELECTRONICS'|'FOOD_INDUSTRIES'|'FUEL_REFINING'|'MANUFACTURING'|'METALLURGY'|'RESOURCE_EXTRACTION'|'AGRICULTURE';
 type CurrencyId = 'NCC'|'CIS'|'AIC'|'ICA'|'ECD';
 
+export interface SystemData {
+  Connections: { Connection: string }[];
+  SystemId: string;
+  Name: string;
+  NaturalId: string;
+  Type: string;
+  PositionX: number;
+  PositionY: number;
+  PositionZ: number;
+  SectorId: string;
+  SubSectorId: string;
+  UserNameSubmitted: string|null;
+  Timestamp: string;
+
+}
+
 interface ProductionFee {
   Category: IndustryId;
   FeeAmount: number;
@@ -81,6 +97,8 @@ export interface PlanetData {
   PlanetTier: number;
   UserNameSubmitted: string;
   Timestamp: string; // TODO: convert to ts number
+  CurrentInfrastructure: InfrastructureData;
+  CurrentTotalPopulation: number;
 }
 
 export interface CommodityAmount {
@@ -160,6 +178,7 @@ export interface CXListingData {
   Demand: number;
   Traded: number;
   VolumeAmount: number;
+  Price: number;
   PriceAverage: number;
   NarrowPriceBandLow: number;
   NarrowPriceBandHigh: number;
@@ -169,4 +188,45 @@ export interface CXListingData {
   MMSell: number|null;
   UserNameSubmitted: string;
   Timestamp: string;
+}
+
+
+export interface InfrastructureData {
+  PopulationId: string;
+  InfrastructureReport: {
+    ExplorersGraceEnabled: number;
+    SimulationPeriod: number;
+    TimestampMs: number;
+    NextPopulationPioneer: number;
+    NextPopulationSettler: number;
+    NextPopulationTechnician: number;
+    NextPopulationEngineer: number;
+    NextPopulationScientist: number;
+    PopulationDifferencePioneer: number;
+    PopulationDifferenceSettler: number;
+    PopulationDifferenceTechnician: number;
+    PopulationDifferenceEngineer: number;
+    PopulationDifferenceScientist: number;
+    AverageHappinessPioneer: number;
+    AverageHappinessSettler: number;
+    AverageHappinessTechnician: number;
+    AverageHappinessEngineer: number;
+    AverageHappinessScientist: number;
+    UnemploymentRatePioneer: number;
+    UnemploymentRateSettler: number;
+    UnemploymentRateTechnician: number;
+    UnemploymentRateEngineer: number;
+    UnemploymentRateScientist: number;
+    OpenJobsPioneer: number;
+    OpenJobsSettler: number;
+    OpenJobsTechnician: number;
+    OpenJobsEngineer: number;
+    OpenJobsScientist: number;
+    NeedFulfillmentLifeSupport: number;
+    NeedFulfillmentSafety: number;
+    NeedFulfillmentHealth: number;
+    NeedFulfillmentComfort: number;
+    NeedFulfillmentCulture: number;
+    NeedFulfillmentEducation: number;
+  }
 }

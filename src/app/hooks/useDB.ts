@@ -1,18 +1,20 @@
 import { IDBPDatabase } from 'idb';
 import { useCallback, useEffect, useState } from 'react';
 import { loading, loadingMessage, loadingState } from '../../features/app/appSlice';
+import { InfrastructureService } from '../../services/extended/services/InfrastructureService';
 import {
   BuildingService, ExchangeService,
   MaterialService,
   PlanetService,
   Recipe_MinimalRecipe,
-  RecipesService
+  RecipesService, SystemstarsService
 } from '../../services/openapi';
-import { BuildingData, CXListingData, MaterialData, PlanetData } from '../datatypes';
-import { initDB, NadirDB, NadirDBStoreName } from '../db';
+import { BuildingData, CXListingData, MaterialData, PlanetData, SystemData } from '../datatypes';
+import { initDB, NadirDBSchema, NadirDBStoreName } from '../db';
 import { useAppDispatch } from '../hooks';
 
 const DATA_TIMEOUT = {
+  'systems': 7 * 24 * 60 * 60 * 1000, // weekly
   'planets': 1 * 24 * 60 * 60 * 1000, // daily
   'recipes': 7 * 24 * 60 * 60 * 1000, // weekly
   'buildings': 7 * 24 * 60 * 60 * 1000, // weekly
@@ -20,16 +22,16 @@ const DATA_TIMEOUT = {
   'cx': 1 * 60 * 60 * 1000, // hourly
 }
 
-let DB: IDBPDatabase<NadirDB>;
+let DB: IDBPDatabase<NadirDBSchema>;
 
 type NadirDBUpdater = (store: 'all' | NadirDBStoreName | NadirDBStoreName[], force?: boolean) => Promise<void>
 
-export type DBRunnable = (db: IDBPDatabase<NadirDB>) => Promise<void>;
+export type DBRunnable = (db: IDBPDatabase<NadirDBSchema>) => Promise<void>;
 
 
-export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: boolean = false): [IDBPDatabase<NadirDB> | undefined, NadirDBUpdater] => {
+export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: boolean = false): [IDBPDatabase<NadirDBSchema> | undefined, NadirDBUpdater] => {
   const dispatch = useAppDispatch();
-  const [db, setDb] = useState<IDBPDatabase<NadirDB> | undefined>(DB);
+  const [db, setDb] = useState<IDBPDatabase<NadirDBSchema> | undefined>(DB);
 
   const updateDB = useCallback<NadirDBUpdater>(async (store, force = false) => {
     if (db) {
@@ -39,6 +41,21 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
       console.log('running update...', stores);
       dispatch(loading(true));
       dispatch(loadingMessage('Loading Data...'));
+      if (stores.indexOf('systems') > -1 || store === 'all') {
+        dispatch(loadingMessage('Loading Systems...'));
+        const lu = await db.get('lastUpdated', 'systems') || 0;
+        if ((lu < now - DATA_TIMEOUT['systems']) || force) {
+          // get planets from api
+          try {
+            const systems = await SystemstarsService.getSystemstarsService();
+            systems.forEach((s: SystemData) => s.SystemId ? db.put('systems', s) : console.log('no systemid', s));
+            await db.put('lastUpdated', now, 'systems');
+          } catch(e) {
+            dispatch(loadingMessage('Error: '+e.toString()))
+            throw e;
+          }
+        }
+      }
       if (stores.indexOf('planets') > -1 || store === 'all') {
         dispatch(loadingMessage('Loading Planets...'));
         const lu = await db.get('lastUpdated', 'planets') || 0;
@@ -46,8 +63,23 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
           // get planets from api
           try {
             const planets = await PlanetService.getPlanetService1();
-            console.log(planets[0]['PlanetId']);
-            planets.forEach((p: PlanetData) => p.PlanetId ? db.put('planets', p) : console.log('no planetid', p));
+            const planets_infra = await InfrastructureService.getAllInfrastructure();
+            // await db.clear('planets');
+            planets.forEach((p: PlanetData) => {
+              const infra = planets_infra.find(i => i.PopulationId === p.PopulationId);
+              if(infra) {
+                p.CurrentInfrastructure = infra;
+                p.CurrentTotalPopulation = (infra.InfrastructureReport.NextPopulationPioneer || 0)
+                  + (infra.InfrastructureReport.NextPopulationSettler || 0)
+                  + (infra.InfrastructureReport.NextPopulationTechnician || 0)
+                  + (infra.InfrastructureReport.NextPopulationEngineer || 0)
+                  + (infra.InfrastructureReport.NextPopulationScientist || 0);
+                console.log(p.PlanetName, p.CurrentTotalPopulation)
+              } else {
+                // console.log('did not find infra for ',p.PlanetName, p.PopulationId, planets_infra.length)
+              }
+              p.PlanetId ? db.put('planets', p) : console.log('no planetid', p)
+            });
             await db.put('lastUpdated', now, 'planets');
           } catch(e) {
             dispatch(loadingMessage('Error: '+e.toString()))

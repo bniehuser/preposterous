@@ -8,6 +8,8 @@
 @import 'frame';
 @import 'head';
 @import 'forms';
+@import 'tables';
+@import 'search';
 
 
 * {
@@ -312,3 +314,13 @@ html, body {
   color: $color-text-label;
   margin: 4px;
 }
+
+$ANT: #c2475f;
+$BEN: #4d97cc;
+$HRT: #709c84;
+$MOR: #a15747;
+
+.NCC, .NC1, .MOR { color: $MOR; stroke: $MOR;  }
+.CIS, .CI1, .BEN { color: $BEN; stroke: $BEN;  }
+.ICA, .IC1, .HRT { color: $HRT; stroke: $HRT;  }
+.AIC, .AI1, .ANT { color: $ANT; stroke: $ANT;  }

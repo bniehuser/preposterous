@@ -1,0 +1,21 @@
+@import 'variables';
+
+.search-input {
+  position:relative;
+}
+.search-results {
+  position:absolute;
+  top:100%;
+  right:0;
+  border:1px solid $color-border-table;
+  box-shadow:  0 0 5px 1px fade-out($color-accent-primary,.75);
+  z-index: 99;
+  &>*:last-child .search-result { border-bottom: none; }
+}
+.search-result {
+  min-width:200px;
+  width:100%;
+  background:$color-background-component;
+  border-bottom: 1px solid $color-border-table;
+  padding: 4px 10px;
+}

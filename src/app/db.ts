@@ -1,22 +1,32 @@
+import { IDBPDatabase, StoreValue } from 'idb';
 import * as idb from 'idb';
 import { Recipe_MinimalRecipe } from '../services/openapi';
-import { BuildingData, CXListingData, MaterialData, PlanetData } from './datatypes';
+import { BuildingData, CXListingData, MaterialData, PlanetData, SystemData } from './datatypes';
 
-export type NadirDBStoreName = 'planets'|'recipes'|'buildings'|'materials'|'cx';
+export type NadirDBStoreName = 'systems'|'planets'|'recipes'|'buildings'|'materials'|'cx';
 
-export interface NadirDB extends idb.DBSchema {
+export interface NadirDBSchema extends idb.DBSchema {
+  systems: {
+    key: string;
+    value: SystemData;
+    indexes: {
+      id: string;
+      name: string;
+      connections: string;
+    };
+  };
   planets: {
     key: string;
     value: PlanetData;
-    indexes: { 'planetId': string };
+    indexes: { planetId: string };
   };
   recipes: {
     key: string;
     value: Recipe_MinimalRecipe;
     indexes: {
-      'inputs': string;
-      'outputs': string;
-      'building': string;
+      inputs: string;
+      outputs: string;
+      building: string;
     }
   };
   buildings: {
@@ -48,17 +58,24 @@ export interface NadirDB extends idb.DBSchema {
   };
 }
 
-export let db: idb.IDBPDatabase<NadirDB>;
+export type NadirDB = idb.IDBPDatabase<NadirDBSchema>;
+
+export let db: NadirDB;
 let loading = false;
 
 export const initDB = async () => {
   if(!db && !loading) {
     console.log('going to open db...');
     loading = true;
-    db = await idb.openDB<NadirDB>('nadir', 1, {
+    db = await idb.openDB<NadirDBSchema>('nadir', 1, {
       upgrade(db) {
         // NOTE: we don't care about old or new versions here.  for now, this is _the_ version.
         // TODO: get actual schema and add desired indices
+
+        const systemStore = db.createObjectStore('systems', {keyPath: 'SystemId'});
+        systemStore.createIndex('id', 'SystemNaturalId');
+        systemStore.createIndex('name', 'Name');
+        systemStore.createIndex('connections', 'Connections.Connection');
 
         const planetStore = db.createObjectStore('planets', {keyPath: 'PlanetId'});
         planetStore.createIndex('planetId', 'PlanetNaturalId');
@@ -88,3 +105,69 @@ export const initDB = async () => {
   }
   return db;
 };
+
+
+// const batchSize = 100
+// let keys, values, keyRange = null
+//
+// function fetchMore() {
+//   // If there could be more results, fetch them
+//   if (keys && values && values.length === batchSize) {
+//     // Find keys greater than the last key
+//     keyRange = IDBKeyRange.lowerBound(keys.at(-1), true)
+//     keys = values = undefined
+//     next()
+//   }
+// }
+//
+// function next() {
+//   store.getAllKeys(keyRange, batchSize).onsuccess = e => {
+//     keys = e.target.result
+//     fetchMore()
+//   }
+//   store.getAll(keyRange, batchSize).onsuccess = e => {
+//     values = e.target.result
+//     fetchMore()
+//   }
+// }
+//
+// next()
+
+type DBMapper = <T extends NadirDBStoreName, O>(db: IDBPDatabase<NadirDBSchema>, store: T, rowProcessor: (r: StoreValue<NadirDBSchema,T>) => O, qualifier?: (r:  StoreValue<NadirDBSchema,T>) => boolean) => Promise<O[]>;
+export const dbMapOld: DBMapper = async (db, store, rowProcessor, qualifier) => {
+  const s = performance.now();
+  const tx = db.transaction(store);
+  const t = performance.now();
+  const results = [];
+  let cursor = await tx.store.openCursor();
+  const c = performance.now();
+  const rt = [];
+  while (cursor) {
+    const v = cursor.value;
+    const rs = performance.now()
+    if((!qualifier || qualifier(v))) {
+      results.push(rowProcessor(v));
+    }
+    const rp = performance.now()
+    cursor = await cursor.continue();
+    const rf = performance.now()
+    rt.push([rs, rp, rf]);
+  }
+  const e = performance.now();
+  const ra = rt.length;
+  const ap = rt.reduce((a, c) => a+(c[1]-c[0]), 0)/ra;
+  const ar = rt.reduce((a, c) => a+(c[2]-c[1]), 0)/ra;
+  const ac = rt.reduce((a, c) => a+(c[2]-c[0]), 0)/ra;
+  console.log(`took ${e-s} (${t-s} transaction, ${c-t} cursor), ${ra} recs, avg rec ${ac} (${ap} proc, ${ar} cursor)`)
+  return results;
+}
+export const dbMap: DBMapper = async (db, store, rowProcessor, qualifier) => {
+  const tx = db.transaction(store);
+  const results: any[] = [];
+  (await tx.store.getAll()).forEach(v => {
+    if((!qualifier || qualifier(v))) {
+      results.push(rowProcessor(v));
+    }
+  });
+  return results;
+}

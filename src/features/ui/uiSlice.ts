@@ -11,6 +11,7 @@ export enum TileType {
   MAT,
   BROWSE,
   PRICE,
+  PLANETSEARCH,
 
 }
 
@@ -43,9 +44,9 @@ export interface UIState {
   current: number;
   buffers: Buffer[];
   bufferIdx: number;
-  dragNode: Tile|TileNode|undefined;
   loadingMessage?: string;
   loadingPercent?: number;
+  cxSort: [string, string, string, string];
 }
 
 const initialState: UIState = {
@@ -70,7 +71,7 @@ const initialState: UIState = {
   current: 0,
   buffers: [],
   bufferIdx: 1,
-  dragNode: undefined,
+  cxSort: ['CI1', 'NC1', 'AI1', 'IC1'],
 };
 
 const getNodePath = (state: UIState, path: Path, idx?: number): [TileNode, number] => {
@@ -181,27 +182,6 @@ export const uiSlice = createSlice({
       state.screens.push({n: action.payload, t: {c: TileType.PICKER}})
       state.current = state.screens.length - 1;
     },
-    setDragTile: (state, action: PayloadAction<Tile>) => {
-      state.dragNode = action.payload;
-    },
-    dropDragTile: (state, action: PayloadAction<[Path, number?]>) => {
-      if(state.dragNode) {
-        const [p, i] = action.payload;
-        if (!p.length) {
-          if (i) {
-            const b = state.buffers.find(b => b.i === i);
-            if (b) {
-              b.t = state.dragNode;
-            }
-          } else {
-            state.screens[state.current].t = state.dragNode;
-          }
-        } else {
-          const [n, ci] = getNodePath(state, p, i);
-          n.c[ci] = state.dragNode;
-        }
-      }
-    },
     chooseScreen: (state, action: PayloadAction<number>) => {
       if (state.screens[action.payload]) {
         state.current = action.payload;
@@ -219,8 +199,6 @@ export const {
   updateBuffer,
   removeBuffer,
   bufferToTop,
-  setDragTile,
-  dropDragTile,
   addScreen,
   // updateScreen,
   // removeScreen,
