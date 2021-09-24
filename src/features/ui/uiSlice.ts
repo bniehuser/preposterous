@@ -12,6 +12,7 @@ export enum TileType {
   BROWSE,
   PRICE,
   PLANETSEARCH,
+  MAP,
 
 }
 
@@ -47,6 +48,7 @@ export interface UIState {
   loadingMessage?: string;
   loadingPercent?: number;
   cxSort: [string, string, string, string];
+  route: string[];
 }
 
 const initialState: UIState = {
@@ -72,6 +74,7 @@ const initialState: UIState = {
   buffers: [],
   bufferIdx: 1,
   cxSort: ['CI1', 'NC1', 'AI1', 'IC1'],
+  route: [],
 };
 
 const getNodePath = (state: UIState, path: Path, idx?: number): [TileNode, number] => {
@@ -187,6 +190,9 @@ export const uiSlice = createSlice({
         state.current = action.payload;
       }
     },
+    setRoute: (state, action: PayloadAction<string[]>) => {
+      state.route = action.payload;
+    }
   },
 });
 
@@ -203,6 +209,7 @@ export const {
   // updateScreen,
   // removeScreen,
   chooseScreen,
+  setRoute,
 } = uiSlice.actions;
 
 export const selectScreen = (state: RootState) => state.ui.screens[state.ui.current];

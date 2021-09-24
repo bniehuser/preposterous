@@ -1,13 +1,15 @@
 import classNames from 'classnames';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { MaterialData, PlanetData, SystemData } from '../../../datatypes';
-import { useDBEffect } from '../../../hooks';
+import { useAppDispatch, useDBEffect } from '../../../hooks';
 import { Point, pointDistance } from '../../../util/math';
 import { dbMap, NadirDB } from '../../../db';
 import { nba } from 'ngraph.path';
 import createGraph from 'ngraph.graph';
 import { Icon } from '../Icon';
+import { SpriteIcon } from '../icon/SpriteIcon';
 import { SearchInput } from '../search/SearchInput';
+import { setRoute } from '../../../../features/ui/uiSlice';
 
 const g = createGraph<SystemData,number>();
 
@@ -55,12 +57,18 @@ interface DistMap {
   }
 }
 
+// const objByKey: <T = {[k: string]: any}>(obj: T[], key: keyof T) => {[k: (keyof T) & string]: T} = (obj, key) => {
+//   return obj.reduce((a, c) => { a[c[key]] = c; return a; }, {} as {[k: keyof typeof obj[0]]: typeof obj[0]})
+// }
+
 export const PlanetSearch: FC = () => {
+  const dispatch = useAppDispatch();
   const [loadingMessage, setLoadingMessage] = useState<string|undefined>();
   const [distMap, setDistMap] = useState<DistMap>({})
-  const [results, setResults] = useState<(Partial<PlanetData> & {hops: number, distance: number})[]>([]);
+  const [results, setResults] = useState<(Partial<PlanetData> & {hops: number, distance: number, path: string[]})[]>([]);
   const [startPlanet, setStartPlanet] = useState<PlanetData|undefined>();
   const [searching, setSearching] = useState<boolean>(false);
+  const [efficiency, setEfficiency] = useState<number>(100);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     maxHops:10,
     selectedResources:[],
@@ -73,6 +81,13 @@ export const PlanetSearch: FC = () => {
   });
 
   console.log('gosh, we sure render a lot');
+  const resourceRate = useCallback((p: Partial<PlanetData>, m: MaterialData): [number, number]|undefined => {
+    const r = p.Resources?.find(r => r.MaterialId === m.MatId);
+    if(r) {
+      const y = r.Factor * (r.ResourceType === 'GASEOUS' ? 60 : 70) * (efficiency/100);
+      return [r.Factor, y];
+    }
+  }, [efficiency]);
 
   // map distances to planets when start planet changes
   useDBEffect(async db => {
@@ -112,7 +127,7 @@ export const PlanetSearch: FC = () => {
       setSearching(true);
       const res = await dbMap(db,
         'planets',
-        p => ({...p, hops: distMap[p.SystemId].path.length - 1, distance: distMap[p.SystemId].distance}),
+        p => ({...p, hops: distMap[p.SystemId].path.length - 1, distance: distMap[p.SystemId].distance, path: distMap[p.SystemId].path}),
         p => {
           if(distMap[p.SystemId].path.length >= searchParams.maxHops + 1) {
             return false;
@@ -142,7 +157,7 @@ export const PlanetSearch: FC = () => {
     const pl = await db.getFromIndex('planets','planetId','UV-351a');
     if(pl) setStartPlanet(pl);
     const sel: MaterialData[] = [];
-    await Promise.all(['H2O','N','GAL'].map(async m => {
+    await Promise.all(['FEO','HE','BOR'].map(async m => {
       const r = await db.getFromIndex('materials', 'ticker', m);
       if (r) sel.push(r);
     }))
@@ -184,19 +199,25 @@ export const PlanetSearch: FC = () => {
         <tr><th colSpan={12+searchParams.selectedResources.length} className={'table-header-cell-container'}>
           <section className={'table-header-content'}>
           <form className={'form'}>
-          <div className={'form-component active'}>
-            <label>Starting Planet</label>
-            <div className={'input'}>
-              <span className={'static'}>{startPlanet?.PlanetName}</span>
-              <SearchInput
-                items={planets.map(p => ({...p, SystemName: g.getNode(p.SystemId)?.data.Name || 'NOT FOUND'}))}
-                item={(i, hl) => {
-                  return <button onClick={() => setStartPlanet(i)} className={'linkButt search-result'}>{hl(i.PlanetName)} - {hl(i.SystemName)}</button>
-                }}
-                stringify={(p:any) => `${p.PlanetName} ${p.PlanetNaturalId} ${p.SystemName}`}
-              />
+            <div className={'form-component active'}>
+              <label>Starting Planet</label>
+              <div className={'input'}>
+                <span className={'static type-very-large'}>{startPlanet?.PlanetName}</span>
+                <SearchInput
+                  items={planets.map(p => ({...p, SystemName: g.getNode(p.SystemId)?.data.Name || 'NOT FOUND'}))}
+                  item={(i, hl) => {
+                    return <button onClick={() => setStartPlanet(i)} className={'linkButt search-result'}>{hl(i.PlanetName)} - {hl(i.SystemName)}</button>
+                  }}
+                  stringify={(p:any) => `${p.PlanetName} ${p.PlanetNaturalId} ${p.SystemName}`}
+                />
+              </div>
             </div>
-          </div>
+            <div className={'form-component active'}>
+              <label>Efficiency</label>
+              <div className={'input'}>
+                <input type={'number'} value={efficiency} onChange={e => setEfficiency(parseFloat(e.target.value))} />
+              </div>
+            </div>
             <div className={'form-component active'}>
               <label>Resources</label>
               <div className={'input'}>
@@ -234,31 +255,36 @@ export const PlanetSearch: FC = () => {
         </thead>
         <tbody>
         {results.map(r => (
-        <tr key={r.PlanetId}>
+        <tr key={r.PlanetId} onMouseOver={() => dispatch(setRoute(r.path))} onMouseOut={() => dispatch(setRoute([]))}>
           <td className={'type-larger'}>
-          {r.PlanetName || r.PlanetNaturalId}
+            <div style={{display:'flex',alignItems:'top',justifyContent:'left'}}>
+              <div style={{marginRight:'.25rem',marginLeft:'0'}}><SpriteIcon color={r.BuildRequirements?.some(b => b.MaterialTicker === 'AEF') ? '#d9534f' : '#eee'} img={'planet'}/></div>
+            <div>
+            {r.PlanetName || r.PlanetNaturalId}
             <br/><span className={'type-small text-secondary'}>{g.getNode(r.SystemId||'')?.data.Name} /
             {r.FactionName}
-          </span>
+            </span>
+            </div>
+            </div>
           </td>
           <td className={'number'}>
             {r.CurrentTotalPopulation}
-            {r.CurrentTotalPopulation && <div className={'type-very-small text-secondary'}>
-              <span style={{width:'16px',display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationPioneer}</span>
-              <span style={{width:'16px',display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationSettler}</span>
-              <span style={{width:'16px',display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationTechnician}</span>
-              <span style={{width:'16px',display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationEngineer}</span>
-              <span style={{width:'16px',display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationScientist}</span>
+            {r.CurrentTotalPopulation && <div className={'type-small text-secondary'}>
+              {(r.CurrentInfrastructure?.InfrastructureReport.NextPopulationSettler || 0) <= 1 && <span style={{display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationPioneer} PIO</span>}
+              {(r.CurrentInfrastructure?.InfrastructureReport.NextPopulationSettler || 0) > 1 && (r.CurrentInfrastructure?.InfrastructureReport.NextPopulationTechnician || 0) <= 1 && <span style={{display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationSettler} SET</span>}
+              {(r.CurrentInfrastructure?.InfrastructureReport.NextPopulationTechnician || 0) > 1 && (r.CurrentInfrastructure?.InfrastructureReport.NextPopulationEngineer || 0) <= 1 && <span style={{display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationTechnician} TEC</span>}
+              {(r.CurrentInfrastructure?.InfrastructureReport.NextPopulationEngineer || 0) > 1 && (r.CurrentInfrastructure?.InfrastructureReport.NextPopulationScientist || 0) <= 1 && <span style={{display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationEngineer} ENG</span>}
+              {(r.CurrentInfrastructure?.InfrastructureReport.NextPopulationScientist || 0) > 1 && <span style={{display:'inline-block'}}>{r.CurrentInfrastructure?.InfrastructureReport.NextPopulationScientist} SCI</span>}
             </div>}
           </td>
           <td className={'number'}>
             {r.hops}<br/><span className={'type-small text-secondary'}>{r.distance.toFixed(3)}</span>
           </td>
           {searchParams.selectedResources.map(s => {
-            const f = r.Resources?.find(i => i.MaterialId === s.MatId);
+            const f = resourceRate(r, s);
             return <td key={s.Ticker} className={'symbol'} style={{position:'relative'}}>
-              {f && <div className={'scaleAmount'} style={{position:'absolute',top:'1px',left:0,bottom:'1px', background:'rgba(32, 212, 32, .3)', width:f.Factor*100+'%'}}/>}
-              <span className={'top-text'}>{f?.Factor.toFixed(2) || ''}</span>
+              {f && <div className={'scaleAmount'} style={{position:'absolute',top:'1px',left:0,bottom:'1px', background:'rgba(32, 212, 32, .3)', width:f[0]*100+'%'}}/>}
+              <span className={'top-text'}>{f && f[1].toFixed(2)+'/d'}</span>
             </td>
           })}
           <td className={'symbol'} style={{position:'relative'}}>

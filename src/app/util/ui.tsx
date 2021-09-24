@@ -9,6 +9,7 @@ import { PriceInfo } from '../components/ui/tiles/PriceInfo';
 import { TestTile } from '../components/ui/tiles/TestTile';
 import { db } from '../db';
 import { camelToTitle } from './strings';
+import { Map } from '../components/ui/tiles/Map';
 
 export const getTile = async (ti: TileInfo, p: Path, i?: number) => {
 //  console.log('getting',ti, p);
@@ -20,6 +21,8 @@ export const getTile = async (ti: TileInfo, p: Path, i?: number) => {
       } else {
         return {t: '', d: null, e: 'Illegal Argument'};
       }
+    case TileType.MAP:
+      return {t: 'Map', d: <Map/>}
     case TileType.BUI:
       const b = await db.get('buildings', ti.a as string);
       if (!b) {

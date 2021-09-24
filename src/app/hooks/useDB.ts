@@ -10,16 +10,17 @@ import {
   RecipesService, SystemstarsService
 } from '../../services/openapi';
 import { BuildingData, CXListingData, MaterialData, PlanetData, SystemData } from '../datatypes';
-import { initDB, NadirDBSchema, NadirDBStoreName } from '../db';
+import { initDB, NadirDBSchema, NadirDBStoreName, SectorData } from '../db';
 import { useAppDispatch } from '../hooks';
 
 const DATA_TIMEOUT = {
+  'sectors': 7 * 24 * 60 * 60 * 1000, // weekly
   'systems': 7 * 24 * 60 * 60 * 1000, // weekly
-  'planets': 1 * 24 * 60 * 60 * 1000, // daily
+  'planets': 24 * 60 * 60 * 1000, // daily
   'recipes': 7 * 24 * 60 * 60 * 1000, // weekly
   'buildings': 7 * 24 * 60 * 60 * 1000, // weekly
   'materials': 7 * 24 * 60 * 60 * 1000, // weekly
-  'cx': 1 * 60 * 60 * 1000, // hourly
+  'cx': 60 * 60 * 1000, // hourly
 }
 
 let DB: IDBPDatabase<NadirDBSchema>;
@@ -41,6 +42,21 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
       console.log('running update...', stores);
       dispatch(loading(true));
       dispatch(loadingMessage('Loading Data...'));
+      if (stores.indexOf('sectors') > -1 || store === 'all') {
+        dispatch(loadingMessage('Loading Sectors...'));
+        const lu = await db.get('lastUpdated', 'sectors') || 0;
+        if ((lu < now - DATA_TIMEOUT['sectors']) || force) {
+          // get planets from api
+          try {
+            const systems = await SystemstarsService.getSystemstarsService1();
+            systems.forEach((s: SectorData) => s.SectorId ? db.put('sectors', s) : console.log('no sectorid', s));
+            await db.put('lastUpdated', now, 'sectors');
+          } catch(e) {
+            dispatch(loadingMessage('Error: '+e.toString()))
+            throw e;
+          }
+        }
+      }
       if (stores.indexOf('systems') > -1 || store === 'all') {
         dispatch(loadingMessage('Loading Systems...'));
         const lu = await db.get('lastUpdated', 'systems') || 0;

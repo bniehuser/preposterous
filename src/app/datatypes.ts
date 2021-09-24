@@ -11,7 +11,7 @@ interface BuildRequirement {
 }
 
 type IndustryId = 'CHEMISTRY'|'CONSTRUCTION'|'ELECTRONICS'|'FOOD_INDUSTRIES'|'FUEL_REFINING'|'MANUFACTURING'|'METALLURGY'|'RESOURCE_EXTRACTION'|'AGRICULTURE';
-type CurrencyId = 'NCC'|'CIS'|'AIC'|'ICA'|'ECD';
+export type CurrencyId = 'NCC'|'CIS'|'AIC'|'ICA'|'ECD';
 
 export interface SystemData {
   Connections: { Connection: string }[];

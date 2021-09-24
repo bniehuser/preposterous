@@ -3,15 +3,36 @@ import * as idb from 'idb';
 import { Recipe_MinimalRecipe } from '../services/openapi';
 import { BuildingData, CXListingData, MaterialData, PlanetData, SystemData } from './datatypes';
 
-export type NadirDBStoreName = 'systems'|'planets'|'recipes'|'buildings'|'materials'|'cx';
+
+export interface SectorData {
+  SubSectors: {
+    Vertices: {X: number, Y: number, Z: number}[];
+    SSId: string;
+  }[];
+  SectorId: string;
+  Name: string;
+  HexQ: number,
+  HexR: number,
+  HexS: number,
+  Size: number,
+  UserNameSubmitted: string|null,
+  Timestamp: string
+}
+
 
 export interface NadirDBSchema extends idb.DBSchema {
+  sectors: {
+    key: string;
+    value: SectorData;
+    indexes: { name: string }
+  };
   systems: {
     key: string;
     value: SystemData;
     indexes: {
       id: string;
       name: string;
+      sectorId: string;
       connections: string;
     };
   };
@@ -58,6 +79,8 @@ export interface NadirDBSchema extends idb.DBSchema {
   };
 }
 
+export type NadirDBStoreName = 'sectors'|'systems'|'planets'|'recipes'|'buildings'|'materials'|'cx'|'lastUpdated';
+
 export type NadirDB = idb.IDBPDatabase<NadirDBSchema>;
 
 export let db: NadirDB;
@@ -72,9 +95,13 @@ export const initDB = async () => {
         // NOTE: we don't care about old or new versions here.  for now, this is _the_ version.
         // TODO: get actual schema and add desired indices
 
+        const sectorStore = db.createObjectStore('sectors', {keyPath: 'SectorId'});
+        sectorStore.createIndex('name', 'Name');
+
         const systemStore = db.createObjectStore('systems', {keyPath: 'SystemId'});
         systemStore.createIndex('id', 'SystemNaturalId');
         systemStore.createIndex('name', 'Name');
+        systemStore.createIndex('sectorId', 'SectorId');
         systemStore.createIndex('connections', 'Connections.Connection');
 
         const planetStore = db.createObjectStore('planets', {keyPath: 'PlanetId'});
@@ -133,7 +160,7 @@ export const initDB = async () => {
 //
 // next()
 
-type DBMapper = <T extends NadirDBStoreName, O>(db: IDBPDatabase<NadirDBSchema>, store: T, rowProcessor: (r: StoreValue<NadirDBSchema,T>) => O, qualifier?: (r:  StoreValue<NadirDBSchema,T>) => boolean) => Promise<O[]>;
+type DBMapper = <O, T extends NadirDBStoreName>(db: IDBPDatabase<NadirDBSchema>, store: T, rowProcessor: (r: StoreValue<NadirDBSchema, T>) => O, qualifier?: (r:  StoreValue<NadirDBSchema, T>) => boolean) => Promise<O[]>;
 export const dbMapOld: DBMapper = async (db, store, rowProcessor, qualifier) => {
   const s = performance.now();
   const tx = db.transaction(store);

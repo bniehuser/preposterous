@@ -1,0 +1,63 @@
+@import 'variables';
+
+.splash-container {
+  height: 100%;
+  background-color: $color-background-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+
+
+  .container {
+    display: inline-block;
+    outline: none;
+    height: 16px;
+  }
+  .indicator {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 0;
+    width: 2px;
+    height: 100%;
+    background-color: rgba(247, 166, 0, 0.15);
+  }
+  .enabled {
+    @extend .shadowPrimary;
+    background-color: #f7a600;
+  }
+  .value {
+    @extend .font-regular;
+    @extend .type-small;
+    display: inline-block;
+    vertical-align: super;
+    color: #999;
+  }
+
+}
+
+.splash-title {
+  @extend .font-headers;
+  @extend .type-intro;
+
+  color: $color-text
+}
+
+.splash-text {
+  @extend .font-regular;
+  @extend .type-regular;
+
+  color: $color-text;
+}
+
+.splash-loader {
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 20px;
+}
+
+.splash-item {
+  padding-top: 5px;
+}

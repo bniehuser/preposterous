@@ -320,7 +320,90 @@ $BEN: #4d97cc;
 $HRT: #709c84;
 $MOR: #a15747;
 
-.NCC, .NC1, .MOR { color: $MOR; stroke: $MOR;  }
-.CIS, .CI1, .BEN { color: $BEN; stroke: $BEN;  }
-.ICA, .IC1, .HRT { color: $HRT; stroke: $HRT;  }
-.AIC, .AI1, .ANT { color: $ANT; stroke: $ANT;  }
+
+circle, line, text {
+  z-index:1;
+  fill: fade-out($color-text, .5);
+  stroke: $color-text;
+}
+text {
+  fill: $color-text;
+}
+
+.svg-map {
+
+  line {
+    pointer-events: none;
+    &.route { stroke: $color-accent-primary; stroke-width:3px; }
+    z-index:1;
+  }
+
+
+  .map-group {
+    z-index:0;
+    polygon {
+      fill: rgba(255, 255, 255, .05);
+      transition: 250ms ease-in;
+      &:hover { fill: rgba(255,255,255, .12) !important; }
+    }
+
+    transition: 250ms ease-in;
+    pointer-events: visiblePainted;
+
+    .sector-name {
+      font-size: 72px;
+      opacity: 0;
+      pointer-events:none;
+    }
+
+    &:hover, &.is-hovered {
+      polygon {
+        fill: rgba(255, 255, 255, .09);
+      }
+      .sector-name {
+        opacity:.4;
+      }
+    }
+  }
+
+
+  .sub-display {
+    overflow: visible;
+    z-index:3;
+    text {
+      z-index:4;
+      font-size:1rem;
+    }
+  }
+
+  .system-indicator {
+    pointer-events: visiblePainted;
+    .system {
+      z-index:2;
+      cursor: pointer;
+      &.route { stroke: $color-accent-primary }
+    }
+    &.route-end .system { fill: $color-accent-primary }
+    .system-name {
+      z-index:3;
+      opacity: 0;
+      transition: 250ms ease-in;
+      font-weight: 400;
+      pointer-events: none;
+      filter: drop-shadow(0 0 3px #000);
+      stroke: #000;
+      stroke-width: .3;
+      @extend .type-very-large;
+    }
+    &:hover .system-name, &.route-end .system-name {
+      opacity: 1;
+      z-index:9;
+    }
+  }
+}
+
+.NCC, .NC1, .MOR { color: $MOR; stroke: $MOR; fill: fade-out($MOR, .5); text { fill: $MOR; }  }
+.CIS, .CI1, .BEN { color: $BEN; stroke: $BEN; fill: fade-out($BEN, .5); text { fill: $BEN; }  }
+.ICA, .IC1, .HRT { color: $HRT; stroke: $HRT; fill: fade-out($HRT, .5); text { fill: $HRT; }  }
+.AIC, .AI1, .ANT { color: $ANT; stroke: $ANT; fill: fade-out($ANT, .5); text { fill: $ANT; }  }
+
