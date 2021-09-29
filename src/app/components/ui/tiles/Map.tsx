@@ -1,5 +1,6 @@
 import createGraph from 'ngraph.graph';
-import panzoom from 'panzoom';
+import panzoom, { PanZoom } from 'panzoom';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { CurrencyId, SystemData } from '../../../datatypes';
 import { NadirDB } from '../../../db';
@@ -26,7 +27,7 @@ const loadGraph = async (db: NadirDB) => {
   }
   allSys.forEach(s => {
     s.Connections.forEach(c => {
-      console.log('checking distance from ',systemLocations[s.SystemId], systemLocations[c.Connection])
+      // console.log('checking distance from ',systemLocations[s.SystemId], systemLocations[c.Connection])
       g.addLink(
         s.SystemId,
         c.Connection,
@@ -43,8 +44,19 @@ type SectorMin = [SubsectorMin[], CurrencyId|null];
 type SystemMin = [number, number, CurrencyId|null, string, string];
 type SystemLinkMin = [number, number, number, number, CurrencyId|null, string, string];
 
-export const Map: FC = () => {
+interface MapSettings {
+  x?: number;
+  y?: number;
+  zoom?: number;
+}
+interface Props {
+  s?: MapSettings;
+  ss?: (s: MapSettings) => void;
+}
+
+export const Map: FC<Props> = props => {
   const route = useAppSelector(state => state.ui.route);
+  const [{s, ss}] = useState<Props>(props); // cache local to satisfy useEffect
   const [systems, setSystems] = useState<SystemMin[]>([]);
   const [links, setLinks] = useState<SystemLinkMin[]>([]);
   const [sectors, setSectors] = useState<SectorMin[]>([]);
@@ -52,13 +64,27 @@ export const Map: FC = () => {
   useEffect(() => {
     if(ref.current) {
       const z = panzoom(ref.current, {
-        initialX: 0,
-        initialY: 0,
-        initialZoom: 1,
+        initialX: s?.x || 0,
+        initialY: s?.y || 0,
+        initialZoom: s?.zoom || 1,
       });
-      return () => z.dispose();
+      z.moveTo(s?.x || 0, s?.y || 0);
+      if (ss) {
+        const setSettings = debounce(() => {
+          const t = z.getTransform();
+          ss({
+            x: t.x,
+            y: t.y,
+            zoom: t.scale,
+          })
+        }, 700)
+        z.on('transform', setSettings);
+      }
+      return () => {
+        z.dispose();
+      }
     }
-  }, [])
+  }, [s, ss])
   useDBEffect(async db => {
     await loadGraph(db);
     const newSystems: SystemMin[] = [];

@@ -10,12 +10,12 @@
 
 
 
-  .container {
+  .item-container {
     display: inline-block;
     outline: none;
     height: 16px;
   }
-  .indicator {
+  .item-indicator {
     display: inline-block;
     margin: 0 5px;
     padding: 0;
@@ -23,11 +23,11 @@
     height: 100%;
     background-color: rgba(247, 166, 0, 0.15);
   }
-  .enabled {
+  .indicator-enabled {
     @extend .shadowPrimary;
     background-color: #f7a600;
   }
-  .value {
+  .item-value {
     @extend .font-regular;
     @extend .type-small;
     display: inline-block;

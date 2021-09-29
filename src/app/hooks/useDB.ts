@@ -1,17 +1,26 @@
 import { IDBPDatabase } from 'idb';
 import { useCallback, useEffect, useState } from 'react';
-import { loading, loadingMessage, loadingState } from '../../features/app/appSlice';
+import { connecting, initializing, loading, loadingMessage, loadingState } from '../../features/app/appSlice';
 import { InfrastructureService } from '../../services/extended/services/InfrastructureService';
 import {
   BuildingService, ExchangeService,
   MaterialService,
   PlanetService,
   Recipe_MinimalRecipe,
-  RecipesService, SystemstarsService
+  RecipesService, SystemstarsService, SitesService, ShipService, ProductionService, WorkforceService
 } from '../../services/openapi';
-import { BuildingData, CXListingData, MaterialData, PlanetData, SystemData } from '../datatypes';
+import {
+  BuildingData,
+  CXListingData,
+  MaterialData,
+  PlanetData,
+  ProductionData,
+  ShipData,
+  SiteData,
+  SystemData, WorkforceData
+} from '../datatypes';
 import { initDB, NadirDBSchema, NadirDBStoreName, SectorData } from '../db';
-import { useAppDispatch } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
 const DATA_TIMEOUT = {
   'sectors': 7 * 24 * 60 * 60 * 1000, // weekly
@@ -21,6 +30,10 @@ const DATA_TIMEOUT = {
   'buildings': 7 * 24 * 60 * 60 * 1000, // weekly
   'materials': 7 * 24 * 60 * 60 * 1000, // weekly
   'cx': 60 * 60 * 1000, // hourly
+  'sites': 60 * 60 * 1000, // hourly
+  'workforce': 60 * 60 * 1000, // hourly
+  'production': 60 * 60 * 1000, // hourly
+  'ships': 60 * 60 * 1000, // hourly
 }
 
 let DB: IDBPDatabase<NadirDBSchema>;
@@ -166,11 +179,76 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
           }
         }
       }
+      if(username && isLoggedIn) {
+        if (stores.indexOf('sites') > -1 || store === 'all') {
+          dispatch(loadingMessage('Loading Site Data...'));
+          const lu = await db.get('lastUpdated', 'sites') || 0;
+          if ((lu < now - DATA_TIMEOUT['cx']) || force) {
+            // get planets from api
+            try {
+              const sites = await SitesService.getSitesService(username);
+              sites.Sites.forEach((s: SiteData) => s.SiteId ? db.put('sites', s) : console.log('no data id', s));
+              await db.put('lastUpdated', now, 'sites');
+            } catch (e) {
+              dispatch(loadingMessage('Error: ' + e.toString()))
+              throw e;
+            }
+          }
+        }
+        if (stores.indexOf('production') > -1 || store === 'all') {
+          dispatch(loadingMessage('Loading Production Data...'));
+          const lu = await db.get('lastUpdated', 'production') || 0;
+          if ((lu < now - DATA_TIMEOUT['cx']) || force) {
+            // get planets from api
+            try {
+              const production = await ProductionService.getProductionService(username);
+              production.forEach((s: ProductionData) => s.SiteId ? db.put('production', s) : console.log('no data id', s));
+              await db.put('lastUpdated', now, 'production');
+            } catch (e) {
+              dispatch(loadingMessage('Error: ' + e.toString()))
+              throw e;
+            }
+          }
+        }
+        if (stores.indexOf('workforce') > -1 || store === 'all') {
+          dispatch(loadingMessage('Loading Workforce Data...'));
+          const lu = await db.get('lastUpdated', 'workforce') || 0;
+          if ((lu < now - DATA_TIMEOUT['cx']) || force) {
+            // get planets from api
+            try {
+              const workforce = await WorkforceService.getWorkforceService(username);
+              workforce.forEach((s: WorkforceData) => s.SiteId ? db.put('workforce', s) : console.log('no data id', s));
+              await db.put('lastUpdated', now, 'workforce');
+            } catch (e) {
+              dispatch(loadingMessage('Error: ' + e.toString()))
+              throw e;
+            }
+          }
+        }
+        if (stores.indexOf('ships') > -1 || store === 'all') {
+          dispatch(loadingMessage('Loading Ship Data...'));
+          const lu = await db.get('lastUpdated', 'ships') || 0;
+          if ((lu < now - DATA_TIMEOUT['cx']) || force) {
+            // get planets from api
+            try {
+              const ships = await ShipService.getShipService(username);
+              ships.Ships.forEach((s: ShipData) => s.ShipId ? db.put('ships', s) : console.log('no fargin data id', s));
+              await db.put('lastUpdated', now, 'ships');
+            } catch (e) {
+              dispatch(loadingMessage('Error: ' + e.toString()))
+              throw e;
+            }
+          }
+        }
+      }
       dispatch(loadingState({loading: false, loadingMessage: undefined, loadingPercent: undefined}));
     } else {
       console.log('no db yet...');
     }
   }, [dispatch, db]);
+
+  const isLoggedIn = useAppSelector(state => !!state.auth.token)
+  const username = useAppSelector(state => state.auth.username)
 
   useEffect(() => {
     if(!DB) {
@@ -185,15 +263,22 @@ export const useDB = (runDB: DBRunnable|undefined = undefined, updateFirst: bool
 
   useEffect(() => {
     if(db && runDB && !LOADING) {
+      dispatch(connecting(false));
       LOADING = true;
       if(updateFirst) {
         console.log('should be updating');
-        updateDB('all').then(() => runDB(db).then(() => LOADING = false));
+        dispatch(initializing(true));
+        updateDB('all').then(() => runDB(db).then(() => {
+          dispatch(initializing(false));
+          LOADING = false;
+        }));
       } else {
         runDB(db).then(() => LOADING = false);
       }
+    } else if(!db) {
+      dispatch(connecting(true));
     }
-  }, [runDB, db, updateFirst, updateDB])
+  }, [dispatch, runDB, db, updateFirst, updateDB])
 
   return [db, updateDB];
 }

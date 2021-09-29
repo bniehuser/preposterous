@@ -85,7 +85,8 @@ async function getHeaders(options: ApiRequestOptions): Promise<Headers> {
     });
 
     if (isStringWithValue(token)) {
-        headers.append('Authorization', `Bearer ${token}`);
+        // TODO: totally gross hack - expects 'Bearer' by default but that don't work for FIO
+        headers.append('Authorization', `${token}`);
     }
 
     if (isStringWithValue(username) && isStringWithValue(password)) {

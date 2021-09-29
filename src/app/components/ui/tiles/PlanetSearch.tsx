@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react';
 import { MaterialData, PlanetData, SystemData } from '../../../datatypes';
 import { useAppDispatch, useDBEffect } from '../../../hooks';
 import { Point, pointDistance } from '../../../util/math';
@@ -9,7 +9,7 @@ import createGraph from 'ngraph.graph';
 import { Icon } from '../Icon';
 import { SpriteIcon } from '../icon/SpriteIcon';
 import { SearchInput } from '../search/SearchInput';
-import { setRoute } from '../../../../features/ui/uiSlice';
+import { addBuffer, setRoute, TileType } from '../../../../features/ui/uiSlice';
 
 const g = createGraph<SystemData,number>();
 
@@ -57,9 +57,21 @@ interface DistMap {
   }
 }
 
-// const objByKey: <T = {[k: string]: any}>(obj: T[], key: keyof T) => {[k: (keyof T) & string]: T} = (obj, key) => {
-//   return obj.reduce((a, c) => { a[c[key]] = c; return a; }, {} as {[k: keyof typeof obj[0]]: typeof obj[0]})
-// }
+const PlanetCard: FC<{planet: Partial<PlanetData>, hl?: (s: string|null|undefined) => ReactNode}> = ({planet, hl = s => s}) => (
+  <div className={'type-larger'}>
+    <div style={{display:'flex',alignItems:'top',justifyContent:'left'}}>
+      <div style={{marginRight:'.25rem',marginLeft:'0'}}>
+        <SpriteIcon color={planet.BuildRequirements?.some(b => b.MaterialTicker === 'AEF') ? '#d9534f' : '#eee'} img={'planet'}/>
+      </div>
+      <div>
+        {hl(planet.PlanetName || planet.PlanetNaturalId)}<br/>
+        <span className={'type-small text-secondary'}>
+          {hl(g.getNode(planet.SystemId||'')?.data.Name)} / {hl(planet.FactionName)}
+        </span>
+      </div>
+    </div>
+  </div>
+);
 
 export const PlanetSearch: FC = () => {
   const dispatch = useAppDispatch();
@@ -157,7 +169,7 @@ export const PlanetSearch: FC = () => {
     const pl = await db.getFromIndex('planets','planetId','UV-351a');
     if(pl) setStartPlanet(pl);
     const sel: MaterialData[] = [];
-    await Promise.all(['FEO','HE','BOR'].map(async m => {
+    await Promise.all(['AMM','H','ALO','LST'].map(async m => {
       const r = await db.getFromIndex('materials', 'ticker', m);
       if (r) sel.push(r);
     }))
@@ -206,7 +218,7 @@ export const PlanetSearch: FC = () => {
                 <SearchInput
                   items={planets.map(p => ({...p, SystemName: g.getNode(p.SystemId)?.data.Name || 'NOT FOUND'}))}
                   item={(i, hl) => {
-                    return <button onClick={() => setStartPlanet(i)} className={'linkButt search-result'}>{hl(i.PlanetName)} - {hl(i.SystemName)}</button>
+                    return <button onClick={() => setStartPlanet(i)} className={'linkButt search-result'}><PlanetCard planet={i} hl={hl}/></button>
                   }}
                   stringify={(p:any) => `${p.PlanetName} ${p.PlanetNaturalId} ${p.SystemName}`}
                 />
@@ -256,16 +268,13 @@ export const PlanetSearch: FC = () => {
         <tbody>
         {results.map(r => (
         <tr key={r.PlanetId} onMouseOver={() => dispatch(setRoute(r.path))} onMouseOut={() => dispatch(setRoute([]))}>
-          <td className={'type-larger'}>
-            <div style={{display:'flex',alignItems:'top',justifyContent:'left'}}>
-              <div style={{marginRight:'.25rem',marginLeft:'0'}}><SpriteIcon color={r.BuildRequirements?.some(b => b.MaterialTicker === 'AEF') ? '#d9534f' : '#eee'} img={'planet'}/></div>
-            <div>
-            {r.PlanetName || r.PlanetNaturalId}
-            <br/><span className={'type-small text-secondary'}>{g.getNode(r.SystemId||'')?.data.Name} /
-            {r.FactionName}
-            </span>
-            </div>
-            </div>
+          <td>
+            <button className={'linkButt'} onClick={() => {
+              console.log('clicked fo real')
+              dispatch(addBuffer({c: TileType.PLI, a: r.PlanetNaturalId}));
+            }}>
+            <PlanetCard planet={r}/>
+            </button>
           </td>
           <td className={'number'}>
             {r.CurrentTotalPopulation}

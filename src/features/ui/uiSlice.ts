@@ -13,6 +13,7 @@ export enum TileType {
   PRICE,
   PLANETSEARCH,
   MAP,
+  PLI,
 
 }
 

@@ -48,6 +48,7 @@ export const authSlice = createSlice({
         state.isAdministrator = action.payload.IsAdministrator || false;
         state.expires = action.payload.Expiry ? new Date(action.payload.Expiry).getTime() : undefined;
         state.loading = false;
+        // can we force load here?
       });
   },
 });

@@ -7,7 +7,7 @@ type Highlighter = (s: string, m: string, qre?: RegExp) => ReactNode;
 
 interface Props<T> {
   items: T[];
-  item: (i: T, hl: (s: string) => ReactNode) => ReactNode;
+  item: (i: T, hl: (s: string|null|undefined) => ReactNode) => ReactNode;
   q?: string;
   stringify?: (i:T) => string;
   search?: (i:T, q: string, qre?: RegExp) => number;
@@ -65,7 +65,7 @@ export const SearchInput: FC<Props<any>> = ({
   return <div className={'search-input'}>
     <input type={'text'} value={q} onChange={debouncedSearch} />
     <div className={'search-results'}>
-      {results.map((r, i) => <div key={i}>{item(r, s => highlighter(s, q))}</div>)}
+      {results.map((r, i) => <div key={i}>{item(r, s => highlighter(s || '', q))}</div>)}
     </div>
   </div>
 }

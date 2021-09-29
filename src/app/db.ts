@@ -1,7 +1,15 @@
-import { IDBPDatabase, StoreValue } from 'idb';
+import { IDBPDatabase, StoreNames, StoreValue } from 'idb';
 import * as idb from 'idb';
 import { Recipe_MinimalRecipe } from '../services/openapi';
-import { BuildingData, CXListingData, MaterialData, PlanetData, SystemData } from './datatypes';
+import {
+  BuildingData,
+  CXListingData,
+  MaterialData,
+  PlanetData,
+  ProductionData, ShipData, SiteData,
+  SystemData,
+  WorkforceData
+} from './datatypes';
 
 
 export interface SectorData {
@@ -72,15 +80,52 @@ export interface NadirDBSchema extends idb.DBSchema {
       ticker: string;
       cx: string;
     }
-  }
+  };
+  workforce: {
+    key: string;
+    value: WorkforceData;
+    indexes: {
+      planetId: string;
+      type: string;
+      material: string;
+    }
+  };
+  production: {
+    key: string;
+    value: ProductionData;
+    indexes: {
+      planetId: string;
+      input: string;
+      output: string;
+    }
+  };
+  ships: {
+    key: string;
+    value: ShipData;
+    indexes: {
+      store: string;
+      registration: string;
+      name: string;
+      repairs: string;
+    }
+  };
+  sites: {
+    key: string;
+    value: SiteData;
+    indexes: {
+      planetId: string;
+      building: string;
+      repairs: string;
+      reclaims: string;
+    }
+  };
   lastUpdated: {
     key: NadirDBStoreName;
     value: number;
   };
 }
 
-export type NadirDBStoreName = 'sectors'|'systems'|'planets'|'recipes'|'buildings'|'materials'|'cx'|'lastUpdated';
-
+export type NadirDBStoreName = StoreNames<NadirDBSchema>;
 export type NadirDB = idb.IDBPDatabase<NadirDBSchema>;
 
 export let db: NadirDB;
@@ -93,7 +138,6 @@ export const initDB = async () => {
     db = await idb.openDB<NadirDBSchema>('nadir', 1, {
       upgrade(db) {
         // NOTE: we don't care about old or new versions here.  for now, this is _the_ version.
-        // TODO: get actual schema and add desired indices
 
         const sectorStore = db.createObjectStore('sectors', {keyPath: 'SectorId'});
         sectorStore.createIndex('name', 'Name');
@@ -124,6 +168,28 @@ export const initDB = async () => {
         cxStore.createIndex('cxTicker', ['MaterialTicker', 'ExchangeCode']);
         cxStore.createIndex('ticker', 'MaterialTicker');
         cxStore.createIndex('cx', 'ExchangeCode');
+
+        const siteStore = db.createObjectStore('sites', {keyPath: 'SiteId'});
+        siteStore.createIndex('planetId', 'PlanetId')
+        siteStore.createIndex('building', 'Buildings.BuildingTicker')
+        siteStore.createIndex('repairs', 'Buildings.RepairMaterials.MaterialTicker')
+        siteStore.createIndex('reclaims', 'Buildings.ReclaimableMaterials.MaterialTicker')
+
+        const productionStore = db.createObjectStore('production', {keyPath: 'SiteId'});
+        productionStore.createIndex('planetId', 'ProductionLines.PlanetId')
+        productionStore.createIndex('input', 'ProductionLines.Orders.Inputs.MaterialId')
+        productionStore.createIndex('output', 'ProductionLines.Orders.Outputs.MaterialId')
+
+        const workforceStore = db.createObjectStore('workforce', {keyPath: 'SiteId'});
+        workforceStore.createIndex('planetId', 'PlanetId');
+        workforceStore.createIndex('type', 'Workforces.WorkforceTypeName');
+        workforceStore.createIndex('material', 'Workforces.WorkforceNeeds.MaterialTicker');
+
+        const shipStore = db.createObjectStore('ships', {keyPath: 'ShipId'});
+        shipStore.createIndex('store', 'StoreId');
+        shipStore.createIndex('registration', 'Registration');
+        shipStore.createIndex('name', 'Name');
+        shipStore.createIndex('repairs', 'Repairs.MaterialTicker');
 
         db.createObjectStore('lastUpdated');
       }
@@ -161,33 +227,6 @@ export const initDB = async () => {
 // next()
 
 type DBMapper = <O, T extends NadirDBStoreName>(db: IDBPDatabase<NadirDBSchema>, store: T, rowProcessor: (r: StoreValue<NadirDBSchema, T>) => O, qualifier?: (r:  StoreValue<NadirDBSchema, T>) => boolean) => Promise<O[]>;
-export const dbMapOld: DBMapper = async (db, store, rowProcessor, qualifier) => {
-  const s = performance.now();
-  const tx = db.transaction(store);
-  const t = performance.now();
-  const results = [];
-  let cursor = await tx.store.openCursor();
-  const c = performance.now();
-  const rt = [];
-  while (cursor) {
-    const v = cursor.value;
-    const rs = performance.now()
-    if((!qualifier || qualifier(v))) {
-      results.push(rowProcessor(v));
-    }
-    const rp = performance.now()
-    cursor = await cursor.continue();
-    const rf = performance.now()
-    rt.push([rs, rp, rf]);
-  }
-  const e = performance.now();
-  const ra = rt.length;
-  const ap = rt.reduce((a, c) => a+(c[1]-c[0]), 0)/ra;
-  const ar = rt.reduce((a, c) => a+(c[2]-c[1]), 0)/ra;
-  const ac = rt.reduce((a, c) => a+(c[2]-c[0]), 0)/ra;
-  console.log(`took ${e-s} (${t-s} transaction, ${c-t} cursor), ${ra} recs, avg rec ${ac} (${ap} proc, ${ar} cursor)`)
-  return results;
-}
 export const dbMap: DBMapper = async (db, store, rowProcessor, qualifier) => {
   const tx = db.transaction(store);
   const results: any[] = [];

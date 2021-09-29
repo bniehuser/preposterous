@@ -4,6 +4,7 @@ import { Browse } from '../components/ui/tiles/Browse';
 import { BuildingInfo } from '../components/ui/tiles/BuildingInfo';
 import { MaterialInfo } from '../components/ui/tiles/MaterialInfo';
 import { Picker } from '../components/ui/tiles/Picker';
+import { PlanetInfo } from '../components/ui/tiles/PlanetInfo';
 import { PlanetSearch } from '../components/ui/tiles/PlanetSearch';
 import { PriceInfo } from '../components/ui/tiles/PriceInfo';
 import { TestTile } from '../components/ui/tiles/TestTile';
@@ -11,7 +12,7 @@ import { db } from '../db';
 import { camelToTitle } from './strings';
 import { Map } from '../components/ui/tiles/Map';
 
-export const getTile = async (ti: TileInfo, p: Path, i?: number) => {
+export const getTile = async (ti: TileInfo, p: Path, i?: number, ss?: (s: any) => void) => {
 //  console.log('getting',ti, p);
   switch (ti.c) {
     case TileType.BROWSE:
@@ -22,7 +23,7 @@ export const getTile = async (ti: TileInfo, p: Path, i?: number) => {
         return {t: '', d: null, e: 'Illegal Argument'};
       }
     case TileType.MAP:
-      return {t: 'Map', d: <Map/>}
+      return {t: 'Map', d: <Map s={ti.s} ss={ss}/>}
     case TileType.BUI:
       const b = await db.get('buildings', ti.a as string);
       if (!b) {
@@ -39,8 +40,13 @@ export const getTile = async (ti: TileInfo, p: Path, i?: number) => {
       if (!m) {
         return {t: '', d: null, e: 'Illegal Argument'}
       }
-      console.log('should be getting MATERIAL', m)
       return {t: `Material: ${camelToTitle(m.Name)}`, d: <MaterialInfo material={m}/>};
+    case TileType.PLI:
+      const pl = await db.getFromIndex('planets', 'planetId', ti.a as string);
+      if (!pl) {
+        return {t: '', d: null, e: 'Illegal Argument'}
+      }
+      return {t: `Planet: ${pl.PlanetName}`, d: <PlanetInfo planet={pl}/>};
     case TileType.TEST:
       return {t: 'Test', d: <TestTile/>};
     case TileType.PLANETSEARCH:

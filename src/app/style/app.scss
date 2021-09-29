@@ -10,6 +10,7 @@
 @import 'forms';
 @import 'tables';
 @import 'search';
+@import 'splash';
 
 
 * {
@@ -95,6 +96,7 @@ html, body {
     line-height: 0.9;
     border-radius: 3px 0 0 0;
     padding: 3px 3px 2px 4px;
+    font-weight: initial;
     color: #bbb;
     background-color: #23282b;
     font-size: 8px;
@@ -278,6 +280,26 @@ html, body {
 }
 
 .building-info {
+  display: inline-flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  padding: 4px 8px;
+}
+
+.planet-title {
+  padding-bottom: 4px;
+}
+.planet-name {
+  @extend .font-headers;
+  @extend .type-very-large;
+
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.planet-info {
   display: inline-flex;
   flex-direction: column;
 

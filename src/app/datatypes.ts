@@ -230,3 +230,133 @@ export interface InfrastructureData {
     NeedFulfillmentEducation: number;
   }
 }
+
+export interface WorkforceData {
+  Workforces: {
+    WorkforceNeeds: {
+      Category: string,
+      Essential: boolean,
+      MaterialId: string,
+      MaterialName: string,
+      MaterialTicker: string,
+      Satisfaction: number,
+      UnitsPerInterval: number,
+      UnitsPerOneHundred: number
+    }[];
+    WorkforceTypeName: string,
+    Population: number,
+    Reserve: number,
+    Capacity: number,
+    Required: number,
+    Satisfaction: number
+  }[];
+  PlanetId: string,
+  PlanetNaturalId: string,
+  PlanetName: string,
+  SiteId: string,
+  LastWorkforceUpdateTime: string,
+  UserNameSubmitted: string,
+  Timestamp: string
+}
+
+export interface ProductionData {
+  ProductionLines: {
+    Orders: {
+      Inputs: {
+        MaterialName: string;
+        MaterialTicker: string;
+        MaterialId: string;
+        MaterialAmount: number;
+      }[];
+      Outputs: {
+        MaterialName: string;
+        MaterialTicker: string;
+        MaterialId: string;
+        MaterialAmount: number;
+      }[];
+      ProductionId: string;
+      CreatedEpochMs: number;
+      StartedEpochMs: number;
+      CompletionEpochMs: number;
+      DurationMs: number;
+      LastUpdatedEpochMs: number;
+      CompletedPercentage: number;
+      IsHalted: boolean;
+      Recurring: boolean;
+      ProductionFee: number;
+      ProductionFeeCurrency: string;
+      ProductionFeeCollectorId: string;
+      ProductionFeeCollectorName: string;
+      ProductionFeeCollectorCode: string;
+    }[];
+    LineId: string;
+    SiteId: string;
+    PlanetId: string;
+    PlanetNaturalId: string;
+    PlanetName: string;
+    Type: string;
+    Capacity: number;
+    Efficiency: number;
+    Condition: number;
+  }[];
+  SiteId: string;
+  UserNameSubmitted: string;
+  Timestamp: string;
+}
+
+export interface ShipData {
+  RepairMaterials: {
+    MaterialName: string;
+    MaterialId: string;
+    MaterialTicker: string;
+    Amount: number;
+  }[];
+  ShipId: string;
+  StoreId: string;
+  StlFuelStoreId: string;
+  FtlFuelStoreId: string;
+  Registration: string;
+  Name: string;
+  CommissioningTimeEpochMs: number;
+  BlueprintNaturalId: string|null,
+  FlightId: string|null,
+  Acceleration: number;
+  Thrust: number;
+  Mass: number;
+  OperatingEmptyMass: number;
+  ReactorPower: number;
+  EmitterPower: number;
+  Volume: number;
+  Condition: number;
+  LastRepairEpochMs: number;
+  Location: string;
+  StlFuelFlowRate: number;
+}
+
+export interface SiteData {
+  Buildings: {
+    ReclaimableMaterials: {
+      MaterialId: string;
+      MaterialName: string;
+      MaterialTicker: string;
+      MaterialAmount: number;
+    }[],
+    RepairMaterials: {
+      MaterialId: string;
+      MaterialName: string;
+      MaterialTicker: string;
+      MaterialAmount: number;
+    }[];
+    BuildingCreated: number;
+    BuildingId: string;
+    BuildingName: string;
+    BuildingTicker: string;
+    BuildingLastRepair: string|null,
+    Condition: number;
+  }[];
+  SiteId: string;
+  PlanetId: string;
+  PlanetIdentifier: string;
+  PlanetName: string;
+  PlanetFoundedEpochMs: number;
+}

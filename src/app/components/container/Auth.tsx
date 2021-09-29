@@ -18,7 +18,7 @@ export const Auth: FC = () => {
   }
 
   return (
-    <div style={{display:'flex', alignItems: 'center', justifyContent: 'center', height:'100%'}}>
+    <div className={'splash-container'}>
 
       <form className={'form'} style={{width:'300px'}} onSubmit={e => { e.preventDefault(); return false; }}>
         <div className={'form-component'}>

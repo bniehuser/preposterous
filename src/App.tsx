@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Auth, TileContainer, Update } from './app/components/container';
+import { Auth, Splash, TileContainer, Update } from './app/components/container';
 import { Foot, Head, Sidebar } from './app/components/layout';
 import { Tile, TileNode } from './app/components/ui';
 import { Buffers } from './app/components/ui/Buffers';
@@ -37,7 +37,15 @@ function App() {
   }));
 
   // app won't load at all without db.  this should be a fast operation.
-  const [db] = useDB(async () => undefined, true);
+  const [db, updateDB] = useDB(async () => undefined, true);
+
+  // TODO: this should be automatically done elsewhere
+  useEffect(() => {
+    // upon login, update the db to fetch user data
+    if(token) {
+      updateDB('all').then(() => console.log('updated db'));
+    }
+  }, [updateDB, token])
 
   if (!db) {
     console.log('db is null?');
@@ -50,9 +58,9 @@ function App() {
         <div tabIndex={-1} style={{height: '100%'}}>
           <div className={'container'} ref={drop}>
             <Sidebar/>
-            {appState.loading ?
-              <div className={'body'} style={{position: 'relative'}}><Update loadingMessage={appState.loadingMessage}
-                                                                             loadingPercent={appState.loadingPercent}/>
+            {appState.connecting ?
+              <div className={'body'} style={{position: 'relative'}}>
+                <Update loadingMessage={'connecting to NADIR interface...'}/>
               </div>
               :
               <div className={'body'}>
@@ -68,6 +76,7 @@ function App() {
                     flexDirection: 'column'
                   }}>
                     <TileContainer>
+                      {appState.initializing ? <Splash /> : (
                       <Switch>
                         <Route path={'/update'}><Update/></Route>
                         <Route path={'/login'}><Auth/></Route>
@@ -78,11 +87,12 @@ function App() {
                             : <TileNode p={pathRef} nodeInfo={screen.t as TileNodeInfo}/>)}
                         </Route>
                       </Switch>
+                      )}
                     </TileContainer>
                   </div>
                 </div>
                 <Foot/>
-                <Buffers/>
+                {!appState.initializing && <Buffers/>}
               </div>
             }
           </div>
