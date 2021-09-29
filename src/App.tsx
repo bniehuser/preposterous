@@ -8,7 +8,7 @@ import { Buffers } from './app/components/ui/Buffers';
 import { useAppDispatch, useAppSelector, useDB } from './app/hooks';
 import './app/style/app.scss';
 import { selectToken } from './features/auth/authSlice';
-import { selectScreen, Tile as TileInfo, TileNode as TileNodeInfo, Buffer as BufferInfo, updateBuffer } from './features/ui/uiSlice';
+import { selectScreen, Tile as TileInfo, TileNode as TileNodeInfo, Buffer as BufferInfo, updateBuffer, addBuffer } from './features/ui/uiSlice';
 import { OpenAPI } from './services/openapi';
 
 function App() {
@@ -35,6 +35,12 @@ function App() {
       }
     }
   }));
+
+  useEffect(() => {
+    const l = (e: KeyboardEvent) => e.ctrlKey && e.key === ' ' && dispatch(addBuffer())
+    document.addEventListener('keydown', l);
+    return () => document.removeEventListener('keydown', l)
+  }, [dispatch]);
 
   // app won't load at all without db.  this should be a fast operation.
   const [db, updateDB] = useDB(async () => undefined, true);

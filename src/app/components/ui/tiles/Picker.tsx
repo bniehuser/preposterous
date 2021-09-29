@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { assignTile, bufferToTop, emptyTile, Path, Tile, TileType } from '../../../../features/ui/uiSlice';
 import { useAppDispatch } from '../../../hooks';
@@ -17,6 +17,11 @@ export const Picker: FC<Props> = ({p, i, s}) => {
   const [input, setInput] = useState<string>(s?.input || '');
   const [error, setError] = useState<string>(s?.error || '');
   const dispatch = useAppDispatch();
+  const textBox = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    textBox.current?.focus();
+  }, []);
 
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     // The type (or types) to accept - strings or symbols
@@ -51,7 +56,7 @@ export const Picker: FC<Props> = ({p, i, s}) => {
     <div className={classNames('selector', { 'hovered': isOver && canDrop })} ref={drop}>
       <form className={'form'} onSubmit={e => { e.preventDefault(); pick(); }}>
         <div className={'input'}>
-          <input type={'text'} placeholder={'Enter content command'} style={{width:'100%',textAlign:'left'}} value={input} onChange={e => setInput(e.target.value)}/>
+          <input ref={textBox} type={'text'} placeholder={'Enter content command'} style={{width:'100%',textAlign:'left'}} value={input} onChange={e => setInput(e.target.value)}/>
           {error && <div className={'warning'}>{error}</div>}
         </div>
       </form>
